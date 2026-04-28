@@ -409,32 +409,61 @@ function changeLang(lang){
 
 function updateLanguageText(){
   const data = LANG_DATA[currentLang];
-  document.getElementById('langLabel').textContent = data.langLabel;
-  document.getElementById('tagText').textContent = data.tagText;
-  document.getElementById('h1Text').innerHTML = data.h1Text;
-  document.getElementById('pHeader').textContent = data.pHeader;
-  document.getElementById('prizeText').textContent = data.prizeText;
-  document.getElementById('prizeSubText').textContent = data.prizeSubText;
-  document.getElementById('pLabel').textContent = `0 / 8 ${data.completeText}`;
-  document.getElementById('subBtn').textContent = data.submitText;
-  document.getElementById('feedbackBtn').textContent = data.feedbackBtnText;
-  document.getElementById('ansNoteTitle').textContent = data.ansNoteTitle;
-  document.getElementById('fbTitle').textContent = data.fbTitle;
-  document.getElementById('fbDescription').textContent = data.fbDescription;
-  document.getElementById('saveFeedbackBtn').textContent = data.saveFeedbackBtn;
-  document.getElementById('feedbackNote').textContent = data.feedbackNote;
-  document.getElementById('zeroTitle').textContent = data.zeroTitle;
-  document.getElementById('zeroMsg').innerHTML = data.zeroMsg;
-  document.getElementById('feedbackText').placeholder = 
-    currentLang === 'ko' ? '예: 너무 빨랐어요 / 이 부분이 어려웠어요 / 이런 내용이 추가되면 좋을 것 같아요...' :
-    currentLang === 'en' ? 'Example: Too fast / This part was hard / Adding this would be helpful...' :
-    '例如：太快了 / 这部分很难 / 加入这些内容会很好...';
-  document.getElementById('toggleBtn').textContent =
-currentLang === 'ko' ? '📋 정답 해설 모아보기' :
-currentLang === 'en' ? '📋 View Answers' :
-'📋 查看答案解说';
-  document.getElementById("answerWrap").style.display = "none";
-  buildQuiz();
+  
+  // 1. 일반 텍스트 변경 (요소가 있는지 확인 후 안전하게 변경)
+  const setText = (id, text, isHTML = false) => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (isHTML) el.innerHTML = text;
+      else el.textContent = text;
+    }
+  };
+
+  setText('langLabel', data.langLabel);
+  setText('tagText', data.tagText);
+  setText('h1Text', data.h1Text, true); // HTML 포함
+  setText('pHeader', data.pHeader);
+  setText('prizeText', data.prizeText);
+  setText('prizeSubText', data.prizeSubText);
+  setText('subBtn', data.submitText);
+  setText('feedbackBtn', data.feedbackBtnText);
+  setText('fbTitle', data.fbTitle);
+  setText('fbDescription', data.fbDescription);
+  setText('saveFeedbackBtn', data.saveFeedbackBtn);
+  setText('feedbackNote', data.feedbackNote);
+  setText('zeroTitle', data.zeroTitle);
+  setText('zeroMsg', data.zeroMsg, true);
+
+  // 2. 입력창 힌트(Placeholder) 변경
+  const fbTextarea = document.getElementById('feedbackText');
+  if(fbTextarea) {
+    fbTextarea.placeholder = 
+      currentLang === 'ko' ? '예: 너무 빨랐어요 / 이 부분이 어려웠어요 / 이런 내용이 추가되면 좋을 것 같아요...' :
+      currentLang === 'en' ? 'Example: Too fast / This part was hard / Adding this would be helpful...' :
+      '例如：太快了 / 这部分很难 / 加入这些内容会很好...';
+  }
+
+  // 3. 정답 보기 버튼 텍스트 변경
+  const toggleBtn = document.getElementById('toggleBtn');
+  if(toggleBtn) {
+    toggleBtn.textContent =
+      currentLang === 'ko' ? '📋 정답 해설 모아보기' :
+      currentLang === 'en' ? '📋 View Answers' :
+      '📋 查看答案解说';
+  }
+
+  // 4. 상단 진행도 레이블 변경
+  const done = answered.filter(a => a !== null).length;
+  setText('pLabel', `${done} / 8 ${data.completeText}`);
+
+  // 💡 5. 중요: 채점 전이라면 문제를 해당 언어로 다시 그려줌
+  if(!submitted) {
+    buildQuiz(); 
+  }
+  
+  // 정답지 영역은 일단 숨김 (언어 바꿀 때 꼬임 방지)
+  const answerWrap = document.getElementById("answerWrap");
+  if(answerWrap) answerWrap.style.display = "none";
 }
 
 
