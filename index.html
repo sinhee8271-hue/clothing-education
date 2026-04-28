@@ -638,7 +638,7 @@ fetch("https://script.google.com/macros/s/AKfycbxWjiHbYgj8E1bzdnU8kRA8fOdqI5Hg_H
 })
 .then(res => res.text())
 .then(text => {
-  console.log("서버응답:", text);
+  console.log("결과:", result);
 
   const result = JSON.parse(text);
 
