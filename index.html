@@ -612,7 +612,7 @@ function showResult(score){
   // --- [이름 자동 처리 및 전송] ---
   let nm = prompt("이름을 입력하세요 (안 쓰면 자동으로 학생 번호가 붙습니다)");
   if (!nm || nm.trim() === "") {
-    nm = "학생_" + Math.floor(Math.random() * 100);
+    nm = "학생_" + Math.floor(Math.random() * 10000);
   }
   
   const nameTag = document.getElementById('userNameTag');
