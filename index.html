@@ -712,7 +712,6 @@ function submitFeedback() {
 function saveFeedback() {
   const fbText = document.getElementById('feedbackText').value;
   const saveBtn = document.getElementById('saveFeedbackBtn');
-  const successMsg = document.getElementById('successMsg');
 
   if (!fbText.trim()) {
     alert("내용을 입력해 주세요! 😊");
@@ -722,24 +721,26 @@ function saveFeedback() {
   saveBtn.disabled = true;
   saveBtn.textContent = "전송 중...";
 
-  // 퀴즈 전송 주소와 동일한 주소를 사용합니다.
-  fetch("https://script.google.com/macros/s/AKfycbzSoaSsx7LPgtC3bBkku0bMUCYJ5-_zLc8kVDDZpHNXGCM9UwrcUpLrW-m7KIypPx76/exec", {
+  // 💡 중요: 'name'과 'score' 형식을 퀴즈 데이터와 똑같이 맞춰서 보냅니다.
+  fetch("여기에_구글_스크립트_주소_넣기", {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({
-      type: "feedback", // 서버에서 피드백임을 구분
-      content: fbText
+      type: "feedback", 
+      name: "📢 피드백", // B열(이름)에 들어갈 내용
+      score: "-",        // C열(점수)에 들어갈 내용 (숫자 대신 -)
+      content: fbText    // D열(당첨여부)에 들어갈 실제 피드백 내용
     })
   })
   .then(res => res.json())
   .then(result => {
-    if(successMsg) successMsg.style.display = 'block';
-    document.getElementById('feedbackText').value = ""; // 입력창 초기화
+    document.getElementById('successMsg').style.display = 'block';
+    document.getElementById('feedbackText').value = ""; 
     saveBtn.textContent = "제출 완료 ✅";
   })
   .catch(err => {
-    console.error("피드백 전송 에러:", err);
-    alert("전송에 실패했습니다. 다시 시도해 주세요.");
+    console.error("에러:", err);
+    alert("전송 실패. 다시 시도해 주세요.");
     saveBtn.disabled = false;
     saveBtn.textContent = "제출하기";
   });
