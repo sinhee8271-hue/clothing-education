@@ -270,7 +270,7 @@
     <h2 id="zeroTitle">괜찮아요, 처음부터 잘하는 사람은 없어요!</h2>
     <p id="zeroMsg">이번엔 아쉬웠지만 포기하지 마세요 😊<br>
     오늘 배운 내용을 천천히 다시 읽어보면<br>
-    다음엔 분명 훨씬 잘할 수 있을 거예요! 응원해요! 📚✨</p>
+    다음엔 분명 훨씬 잘할 수 있을 거예요! 📚✨</p>
   </div>
 
   <!-- Result Panel -->
@@ -321,10 +321,10 @@ const LANG_DATA = {
     correctText: '✅ 정답입니다! ',
     wrongText: '❌ 오답입니다. 정답은 ',
     zeroTitle: '괜찮아요, 처음부터 잘하는 사람은 없어요!',
-    zeroMsg: '이번엔 아쉬웠지만 포기하지 마세요 😊<br>오늘 배운 내용을 천천히 다시 읽어보면<br>다음엔 분명 훨씬 잘할 수 있을 거예요! 응원해요! 📚✨',
+    zeroMsg: '이번엔 아쉬웠지만 포기하지 마세요 😊<br>오늘 배운 내용을 천천히 다시 읽어보면<br>다음엔 분명 훨씬 잘할 수 있을 거예요! 📚✨',
     prizeTitle1: '🎉 첫 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁',
     prizeTitle2: '🎉 두 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁',
-    prizeMsgText: '8문제 모두 정답! 정말 훌륭해요 ✨<br>선생님께 바로 알려 주세요!',
+    prizeMsgText: '8문제 모두 정답! 정말 훌륭해요 ✨',
     ansNoteTitle: '📋 정답 해설 모아보기',
     fbTitle: '📝 수업 개선점 피드백',
     fbDescription: '이 수업을 더 좋게 만들기 위한 건의사항이 있으신가요? (선택사항)',
@@ -351,7 +351,7 @@ const LANG_DATA = {
     zeroMsg: 'Don\'t give up even if it wasn\'t great this time! 😊<br>If you review today\'s lesson carefully,<br>you\'ll do much better next time! We believe in you! 📚✨',
     prizeTitle1: '🎉 1st Perfect Score! Come up and get your prize! 🎁',
     prizeTitle2: '🎉 2nd Perfect Score! Come up and get your prize! 🎁',
-    prizeMsgText: 'All 8 answers correct! Excellent work! ✨<br>Tell your teacher right away!',
+    prizeMsgText: 'All 8 answers correct! Excellent work! ✨',
     ansNoteTitle: '📋 Answer Explanations',
     fbTitle: '📝 Lesson Feedback',
     fbDescription: 'Do you have suggestions to improve this lesson? (Optional)',
@@ -378,7 +378,7 @@ const LANG_DATA = {
     zeroMsg: '虽然这次有点遗憾，但不要放弃！😊<br>如果你慢慢地重新阅读今天学的内容，<br>下一次一定能做得更好！加油！📚✨',
     prizeTitle1: '🎉 第1个满分者！上来领取奖品！🎁',
     prizeTitle2: '🎉 第2个满分者！上来领取奖品！🎁',
-    prizeMsgText: '全部8道题都答对！太棒了！✨<br>立即告诉老师！',
+    prizeMsgText: '全部8道题都答对！太棒了！✨',
     ansNoteTitle: '📋 答案解说汇总',
     fbTitle: '📝 课程改进反馈',
     fbDescription: '你有什么建议来改进这堂课吗？(可选)',
@@ -561,8 +561,13 @@ function submitAll(){
         fb.innerHTML = `${data.wrongText}<strong>${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</strong><br>${q.ex}`;
       }
     }
+    ansLines.push(
+  `<li><b>Q${qi+1}</b> 정답: ${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</li>`
+);
+    
   });
-
+  
+document.getElementById('ansList').innerHTML = ansLines.join('');
   showResult(score);
 }
 
