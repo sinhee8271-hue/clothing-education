@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>의복 디자인 요소 — 평가 퀴즈</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+  :root {
+    --navy:#2C3D6B; --mnavy:#4A5F9E; --lnavy:#EBEDF5;
+    --coral:#E07B6A; --scorl:#FAECEA;
+    --teal:#5BABA8;  --steal:#E3F3F2;
+    --gold:#D4A853;  --sgold:#FDF3E0;
+    --purp:#7B68AA;  --spurp:#F0EDF8;
+    --dark:#2D2D2D;  --gray:#888; --lgray:#F5F5F5; --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans KR',sans-serif;
+    background:linear-gradient(135deg,#1e2d58 0%,#2C3D6B 50%,#1a2540 100%);
+    min-height:100vh; padding:40px 20px; color:var(--dark);
+  }
+  .wrap{max-width:860px;margin:0 auto;}
+
+  /* Header */
+  .hd{text-align:center;margin-bottom:36px;}
+  .hd .tag{display:inline-block;background:var(--coral);color:#fff;font-size:12px;font-weight:700;
+    letter-spacing:1.5px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
+  .hd h1{color:#fff;font-size:28px;font-weight:900;line-height:1.35;margin-bottom:8px;}
+  .hd p{color:rgba(255,255,255,.6);font-size:14px;}
+
+  /* Prize banner */
+  .prize-banner{
+    background:linear-gradient(135deg,#f9c23c,#f4a818);
+    border-radius:16px;padding:14px 24px;margin-bottom:24px;
+    display:flex;align-items:center;gap:14px;
+    box-shadow:0 4px 18px rgba(244,168,24,.4);
+  }
+  .prize-banner .icon{font-size:28px;}
+  .prize-banner p{font-size:14px;font-weight:700;color:#5a3800;line-height:1.5;}
+  .prize-banner span{font-size:12px;font-weight:500;color:#7a5200;}
+
+  /* Progress */
+  .prog-wrap{background:rgba(255,255,255,.12);border-radius:12px;padding:16px 24px;
+    margin-bottom:28px;display:flex;align-items:center;gap:16px;}
+  .prog-bg{flex:1;height:10px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;}
+  .prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--teal),var(--coral));
+    border-radius:99px;transition:width .5s ease;}
+  .prog-lbl{color:rgba(255,255,255,.85);font-size:13px;font-weight:700;white-space:nowrap;}
+
+  /* Card */
+  .card{
+    background:#fff;border-radius:20px;padding:30px 34px;margin-bottom:20px;
+    box-shadow:0 8px 32px rgba(0,0,0,.18);position:relative;overflow:hidden;
+  }
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;
+    background:var(--ca,var(--coral));border-radius:20px 0 0 20px;}
+  .c-hd{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .qbadge{background:var(--ca,var(--coral));color:#fff;font-size:13px;font-weight:900;
+    width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .qtxt{font-size:16px;font-weight:700;line-height:1.5;}
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    display:flex;align-items:center;gap:12px;padding:13px 18px;
+    border:2.5px solid #E8E8E8;border-radius:12px;background:var(--lgray);
+    cursor:pointer;font-size:14px;font-weight:500;color:var(--dark);
+    font-family:'Noto Sans KR',sans-serif;text-align:left;transition:all .2s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--ca,var(--coral));background:#fff;transform:translateX(4px);}
+  .onum{width:28px;height:28px;border-radius:50%;background:#E0E0E0;font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+  .opt:hover:not(:disabled) .onum{background:var(--ca,var(--coral));color:#fff;}
+  .opt.correct{border-color:var(--teal);background:var(--steal);}
+  .opt.correct .onum{background:var(--teal);color:#fff;}
+  .opt.wrong{border-color:var(--coral);background:var(--scorl);}
+  .opt.wrong .onum{background:var(--coral);color:#fff;}
+  .opt.dim{opacity:.4;}
+  .opt:disabled{cursor:default;}
+  .fb{display:none;margin-top:14px;padding:10px 16px;border-radius:10px;
+    font-size:13px;font-weight:700;line-height:1.5;}
+  .fb.show{display:block;}
+  .fb.ok{background:var(--steal);color:#2e7a77;border-left:4px solid var(--teal);}
+  .fb.ng{background:var(--scorl);color:#b85c4c;border-left:4px solid var(--coral);}
+
+  /* Submit */
+  .sub-wrap{text-align:center;margin:10px 0 36px;}
+  .sub-btn{
+    background:linear-gradient(135deg,var(--coral),#c96050);color:#fff;border:none;
+    padding:16px 56px;font-size:17px;font-weight:900;border-radius:50px;cursor:pointer;
+    font-family:'Noto Sans KR',sans-serif;box-shadow:0 6px 20px rgba(224,123,106,.45);
+    transition:all .2s;
+  }
+  .sub-btn:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(224,123,106,.55);}
+  .sub-btn:disabled{background:#ccc;box-shadow:none;cursor:default;transform:none;}
+
+  /* Result */
+  .result{
+    display:none;background:#fff;border-radius:24px;padding:48px 40px;text-align:center;
+    box-shadow:0 12px 48px rgba(0,0,0,.22);margin-bottom:28px;
+    animation:popIn .5s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  .result.show{display:block;}
+  .r-emoji{font-size:72px;margin-bottom:12px;line-height:1;}
+  .r-score{font-size:54px;font-weight:900;margin-bottom:8px;}
+  .r-score .n{color:var(--coral);}
+  .r-score .t{color:#ccc;font-size:36px;}
+  .r-title{font-size:22px;font-weight:900;margin-bottom:12px;color:var(--dark);}
+  .r-msg{font-size:15px;color:var(--gray);line-height:1.8;margin-bottom:24px;}
+  .stars{font-size:36px;margin-bottom:12px;letter-spacing:4px;}
+  .sbar-bg{height:16px;background:#EBEBEB;border-radius:99px;overflow:hidden;
+    max-width:400px;margin:0 auto 8px;}
+  .sbar-fill{height:100%;border-radius:99px;
+    background:linear-gradient(90deg,var(--teal),var(--coral));transition:width 1s ease .3s;}
+  .spct{font-size:13px;color:var(--gray);margin-bottom:24px;}
+
+  /* Prize result */
+  .prize-result{
+    display:none;
+    background:linear-gradient(135deg,#fff9e6,#fff3cc);
+    border:3px solid #f4a818;border-radius:16px;
+    padding:24px 32px;margin:0 auto 24px;max-width:500px;
+    animation:popIn .6s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .prize-result.show{display:block;}
+  .prize-result .pi{font-size:48px;margin-bottom:8px;}
+  .prize-result h2{font-size:20px;font-weight:900;color:#5a3800;margin-bottom:6px;}
+  .prize-result p{font-size:14px;color:#7a5200;line-height:1.6;}
+
+  /* Zero result */
+  .zero-result{
+    display:none;
+    background:linear-gradient(135deg,#f0f4ff,#e8edff);
+    border:2.5px solid var(--mnavy);border-radius:16px;
+    padding:24px 32px;margin:0 auto 24px;max-width:500px;
+    animation:popIn .5s ease;
+  }
+  .zero-result.show{display:block;}
+  .zero-result .zi{font-size:48px;margin-bottom:8px;}
+  .zero-result h2{font-size:18px;font-weight:900;color:var(--navy);margin-bottom:6px;}
+  .zero-result p{font-size:14px;color:var(--mnavy);line-height:1.6;}
+
+  /* Retry */
+  .retry-btn{background:var(--navy);color:#fff;border:none;padding:14px 44px;
+    font-size:15px;font-weight:700;border-radius:50px;cursor:pointer;
+    font-family:'Noto Sans KR',sans-serif;transition:all .2s;margin-top:8px;}
+  .retry-btn:hover{background:var(--mnavy);transform:translateY(-2px);}
+
+  /* Answer note */
+  .ans-note{display:none;background:var(--lnavy);border-radius:14px;padding:20px 28px;
+    margin-bottom:32px;border-left:5px solid var(--navy);}
+  .ans-note.show{display:block;}
+  .ans-note h3{color:var(--navy);font-size:15px;margin-bottom:12px;}
+  .ans-note ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .ans-note li{font-size:13px;color:var(--dark);}
+  .ans-note li b{color:var(--navy);margin-right:6px;}
+
+  /* Confetti */
+  .cp{position:fixed;width:10px;height:14px;top:-20px;opacity:0;
+    animation:fall linear forwards;border-radius:2px;z-index:999;}
+  @keyframes fall{
+    0%{opacity:1;transform:translateY(0) rotate(0deg);}
+    100%{opacity:0;transform:translateY(110vh) rotate(720deg);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="hd">
+    <div class="tag">기술과 가정 · 의복의 기능과 요소</div>
+    <h1>자기표현을 위한<br>옷차림과 의복 디자인</h1>
+    <p>배운 내용을 확인해 봅시다 — 총 8문제</p>
+  </div>
+
+  <!-- Prize Banner -->
+  <div class="prize-banner">
+    <div class="icon">🎁</div>
+    <div>
+      <p>8문제를 모두 맞힌 선착순 2명에게 선물이 있어요!</p>
+      <span>전부 맞히면 앞으로 나와서 선물을 받아 가세요 🎉</span>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="prog-wrap">
+    <span class="prog-lbl" id="pLabel">0 / 8 답변 완료</span>
+    <div class="prog-bg"><div class="prog-fill" id="pFill"></div></div>
+  </div>
+
+  <!-- Quiz Area -->
+  <div id="quizArea"></div>
+
+  <!-- Submit -->
+  <div class="sub-wrap">
+    <button class="sub-btn" id="subBtn" onclick="submitAll()">채점하기 ✏️</button>
+  </div>
+
+  <!-- Prize Result (hidden until triggered) -->
+  <div class="prize-result" id="prizeBox">
+    <div class="pi">🏆🎁</div>
+    <h2 id="prizeTitle">선착순 당첨! 앞으로 나와 주세요!</h2>
+    <p id="prizeMsg"></p>
+  </div>
+
+  <!-- Zero Result -->
+  <div class="zero-result" id="zeroBox">
+    <div class="zi">💪</div>
+    <h2>괜찮아요, 처음부터 잘하는 사람은 없어요!</h2>
+    <p>이번엔 아쉬웠지만 포기하지 마세요 😊<br>
+    오늘 배운 내용을 천천히 다시 읽어보면<br>
+    다음엔 분명 훨씬 잘할 수 있을 거예요! 응원해요! 📚✨</p>
+  </div>
+
+  <!-- Result Panel -->
+  <div class="result" id="resultPanel">
+    <div class="r-emoji" id="rEmoji"></div>
+    <div class="stars" id="rStars"></div>
+    <div class="r-score"><span class="n" id="rNum"></span><span class="t" id="rTot"></span></div>
+    <div class="r-title" id="rTitle"></div>
+    <div class="r-msg"   id="rMsg"></div>
+    <div class="sbar-bg"><div class="sbar-fill" id="sBarFill" style="width:0%"></div></div>
+    <div class="spct" id="sPct"></div>
+    <button class="retry-btn" onclick="retryQuiz()">🔄 다시 풀기</button>
+  </div>
+
+  <!-- Answer Note -->
+  <div class="ans-note" id="ansNote">
+    <h3>📋 정답 해설 모아보기</h3>
+    <ul id="ansList"></ul>
+  </div>
+
+</div>
+
+<script>
+// ── 선착순 2명 관리 (localStorage) ─────────────────────────────────
+const PRIZE_KEY = 'prizeCount_v1';
+function getPrizeCount(){ return parseInt(localStorage.getItem(PRIZE_KEY)||'0'); }
+function incPrizeCount(){ localStorage.setItem(PRIZE_KEY, getPrizeCount()+1); }
+
+// ── 색상 순서 ────────────────────────────────────────────────────
+const CA = ['--coral','--teal','--gold','--purp','--navy','--teal','--coral','--gold'];
+
+// ── 문제 데이터 ──────────────────────────────────────────────────
+const QS = [
+  {
+    q:"TPO에서 'T'가 의미하는 것은 무엇인가요?",
+    opts:["Texture(재질)","Time(시간)","Tone(색조)","Type(유형)"],
+    ans:1,
+    ex:"TPO는 Time(시간) · Place(장소) · Occasion(상황)을 의미합니다. T는 '시간'으로, 언제 입는지를 고려하는 요소입니다."
+  },
+  {
+    q:"TPO에서 운동복에 대한 설명으로 옳은 것은?",
+    opts:[
+      "격식과 품위 있는 디자인을 선택해야 한다.",
+      "부드러운 소재로 입고 벗기 편해야 한다.",
+      "가볍고 신축성이 크며 땀 흡수가 잘 되어야 한다.",
+      "구김이 적고 위생적인 옷감이 좋다."
+    ],
+    ans:2,
+    ex:"운동복은 가볍고 신축성이 커서 활동하기 편하고, 여러 번 세탁해도 마모되지 않으며 땀 흡수가 잘 되는 재질이 좋습니다."
+  },
+  {
+    q:"의복 디자인의 기본 4요소로 옳은 것은?",
+    opts:[
+      "선 · 색 · 가격 · 브랜드",
+      "선 · 색 · 재질 · 무늬",
+      "색 · 재질 · 사이즈 · 무늬",
+      "선 · 재질 · 계절 · 무늬"
+    ],
+    ans:1,
+    ex:"의복 디자인의 기본 요소는 선(Line) · 색(Color) · 재질(Texture) · 무늬(Pattern) 4가지입니다."
+  },
+  {
+    q:"세로선을 활용하면 어떤 시각적 효과가 있나요?",
+    opts:[
+      "넓어 보이는 효과",
+      "길어 보이는 효과",
+      "작아 보이는 효과",
+      "따뜻해 보이는 효과"
+    ],
+    ans:1,
+    ex:"세로선은 시선을 위아래로 유도하여 길어 보이는 효과를 줍니다. 권위 있고 장엄한 느낌도 줄 수 있습니다."
+  },
+  {
+    q:"난색 계열의 색이 주는 느낌으로 옳은 것은?",
+    opts:[
+      "차갑고 차분한 느낌, 축소되어 보임",
+      "단조롭고 깔끔한 느낌, 무채색 계열",
+      "따뜻하고 활동적인 느낌, 확대되어 보임",
+      "안정적이고 길어 보이는 효과"
+    ],
+    ans:2,
+    ex:"빨강·주황·노랑 계열의 난색은 따뜻하고 활동적인 느낌을 주며, 확대되어 보이는 효과가 있습니다."
+  },
+  {
+    q:"유사 색상 조화에 대한 설명으로 옳은 것은?",
+    opts:[
+      "완전히 다른 색을 배치하여 강한 자극과 생동감을 준다.",
+      "비슷한 색상끼리 매치하여 안정적이고 길어 보이는 효과를 준다.",
+      "무채색만을 활용하여 단정한 느낌을 준다.",
+      "반드시 세 가지 이상의 색을 함께 써야 한다."
+    ],
+    ans:1,
+    ex:"유사 색상 조화는 비슷한 색상끼리 매치하여 시선이 길게 이어지고, 안정적이며 길어 보이는 효과를 줍니다."
+  },
+  {
+    q:"부피가 크고 표면이 거친 소재가 주는 느낌으로 옳은 것은?",
+    opts:[
+      "몸매 라인이 드러나며 우아한 느낌",
+      "매끄럽고 광택이 있으며 고급스러운 느낌",
+      "볼륨감이 느껴지며 덩치가 커 보일 수 있음",
+      "가볍고 활동적인 느낌"
+    ],
+    ans:2,
+    ex:"부피가 크고 거친 소재는 볼륨감이 느껴지며 덩치가 커 보일 수 있습니다."
+  },
+  {
+    q:"작은 무늬의 옷이 주는 효과로 옳은 것은?",
+    opts:[
+      "생동감 있고 대담하며, 몸집이 작아 보이는 효과",
+      "잔잔하고 차분하며, 몸집이 커 보이는 효과",
+      "활동적이고 불안정한 느낌",
+      "딱딱하고 정직한 이미지"
+    ],
+    ans:1,
+    ex:"작은 무늬는 잔잔하고 차분한 느낌을 주며, 문양이 작아 배경 면적이 상대적으로 넓어져 몸집이 커 보이는 효과가 있습니다."
+  }
+];
+
+const answered = new Array(QS.length).fill(null);
+let submitted = false;
+
+// ── 퀴즈 빌드 ────────────────────────────────────────────────────
+function buildQuiz(){
+  const area = document.getElementById('quizArea');
+  area.innerHTML = '';
+  QS.forEach((q, qi) => {
+    const ca = `var(${CA[qi]})`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.setProperty('--ca', ca);
+    card.id = 'card-' + qi;
+    const optsHtml = q.opts.map((o, oi) => `
+      <button class="opt" id="opt-${qi}-${oi}" onclick="pick(${qi},${oi})">
+        <span class="onum">${String.fromCharCode(65+oi)}</span>${o}
+      </button>`).join('');
+    card.innerHTML = `
+      <div class="c-hd">
+        <div class="qbadge">Q${qi+1}</div>
+        <div class="qtxt">${q.q}</div>
+      </div>
+      <div class="opts">${optsHtml}</div>
+      <div class="fb" id="fb-${qi}"></div>`;
+    area.appendChild(card);
+  });
+  updateProg();
+}
+
+function pick(qi, oi){
+  if(submitted) return;
+  answered[qi] = oi;
+  QS[qi].opts.forEach((_,idx)=>{
+    const b = document.getElementById(`opt-${qi}-${idx}`);
+    b.style.borderColor=''; b.style.background='';
+  });
+  const sel = document.getElementById(`opt-${qi}-${oi}`);
+  sel.style.borderColor = `var(${CA[qi]})`;
+  sel.style.background  = '#fff';
+  updateProg();
+}
+
+function updateProg(){
+  const done = answered.filter(a=>a!==null).length;
+  document.getElementById('pFill').style.width = (done/QS.length*100)+'%';
+  document.getElementById('pLabel').textContent = `${done} / ${QS.length} 답변 완료`;
+}
+
+// ── 채점 ─────────────────────────────────────────────────────────
+function submitAll(){
+  const ua = answered.filter(a=>a===null).length;
+  if(ua>0 && !confirm(`아직 ${ua}문제를 풀지 않았어요. 그래도 채점할까요?`)) return;
+  submitted = true;
+  document.getElementById('subBtn').disabled = true;
+
+  let score = 0;
+  const ansLines = [];
+
+  QS.forEach((q, qi)=>{
+    const my = answered[qi];
+    const ok = my === q.ans;
+    if(ok) score++;
+
+    q.opts.forEach((_,oi)=>{
+      const b = document.getElementById(`opt-${qi}-${oi}`);
+      b.disabled = true;
+      b.style.borderColor=''; b.style.background='';
+      b.classList.remove('correct','wrong','dim');
+      if(oi===q.ans) b.classList.add('correct');
+      else if(oi===my && !ok) b.classList.add('wrong');
+      else b.classList.add('dim');
+    });
+
+    const fb = document.getElementById(`fb-${qi}`);
+    fb.classList.add('show');
+    if(ok){
+      fb.classList.add('ok');
+      fb.innerHTML = '✅ 정답입니다! ' + q.ex;
+    } else {
+      fb.classList.add('ng');
+      fb.innerHTML = `❌ 오답입니다. 정답은 <strong>${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</strong><br>${q.ex}`;
+    }
+    ansLines.push(`<li><b>Q${qi+1}</b>${my!==null?String.fromCharCode(65+my):'미응답'} → ${ok?'✅':'❌'} (정답: ${String.fromCharCode(65+q.ans)})</li>`);
+  });
+
+  showResult(score, ansLines);
+}
+
+// ── 결과 출력 ─────────────────────────────────────────────────────
+function showResult(score, ansLines){
+  const total = QS.length;
+  const pct   = Math.round(score/total*100);
+  const panel = document.getElementById('resultPanel');
+
+  // 0점 메시지
+  if(score === 0){
+    document.getElementById('zeroBox').classList.add('show');
+  }
+
+  // 만점 → 선착순 처리
+  if(score === total){
+    const cnt = getPrizeCount();
+    if(cnt < 2){
+      incPrizeCount();
+      const newCnt = getPrizeCount();
+      const prizeTxt = newCnt===1
+        ? '🎉 첫 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁'
+        : '🎉 두 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁';
+      document.getElementById('prizeTitle').textContent = prizeTxt;
+      document.getElementById('prizeMsg').innerHTML =
+        `8문제 모두 정답! 정말 훌륭해요 ✨<br>선생님께 바로 알려 주세요!`;
+      document.getElementById('prizeBox').classList.add('show');
+      launchConfetti(120);
+    } else {
+      // 선착순 마감 후 만점자
+      launchConfetti(80);
+    }
+  }
+
+  let emoji, stars, title, msg;
+  if(score===total){
+    emoji='🎉'; stars='⭐⭐⭐⭐⭐';
+    title='완벽해요! 8문제 모두 정답!';
+    msg='의복 디자인 요소를 완벽하게 이해했군요!<br>오늘 배운 내용을 실생활에서도 꼭 활용해 보세요 👏';
+  } else if(score>=6){
+    emoji='😊'; stars='⭐⭐⭐⭐';
+    title=`${score}문제 정답! 거의 다 맞혔어요!`;
+    msg=`아쉽게 ${total-score}문제를 틀렸어요.<br>틀린 문제의 해설을 다시 확인해 보세요!`;
+  } else if(score>=4){
+    emoji='🙂'; stars='⭐⭐⭐';
+    title=`${score}문제 정답! 절반 이상 맞혔어요!`;
+    msg='아래 해설을 잘 읽고 헷갈리는 개념을 다시 공부해 봐요.<br>조금만 더 노력하면 완벽하게 이해할 수 있어요!';
+  } else if(score>=1){
+    emoji='😅'; stars='⭐⭐';
+    title=`${score}문제 정답! 조금 더 공부가 필요해요!`;
+    msg='수업 내용을 다시 한번 살펴보고 아래 해설을 꼭 읽어 보세요.<br>다시 도전하면 훨씬 좋은 결과가 있을 거예요!';
+  } else {
+    emoji='😢'; stars='⭐';
+    title='아직 개념이 낯설 수 있어요!';
+    msg='처음이니까 괜찮아요. 포기하지 말고 다시 도전해 봐요!';
+  }
+
+  document.getElementById('rEmoji').textContent = emoji;
+  document.getElementById('rStars').textContent = stars;
+  document.getElementById('rNum').textContent   = score;
+  document.getElementById('rTot').textContent   = ' / ' + total;
+  document.getElementById('rTitle').textContent = title;
+  document.getElementById('rMsg').innerHTML     = msg;
+  document.getElementById('sPct').textContent   = '정답률 ' + pct + '%';
+  panel.classList.add('show');
+  setTimeout(()=>{ document.getElementById('sBarFill').style.width = pct+'%'; }, 100);
+
+  document.getElementById('ansList').innerHTML = ansLines.join('');
+  document.getElementById('ansNote').classList.add('show');
+  panel.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function retryQuiz(){
+  submitted = false;
+  answered.fill(null);
+  ['resultPanel','ansNote','prizeBox','zeroBox'].forEach(id=>{
+    document.getElementById(id).classList.remove('show');
+  });
+  document.getElementById('subBtn').disabled = false;
+  document.getElementById('sBarFill').style.width = '0%';
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function launchConfetti(n){
+  const colors=['#E07B6A','#5BABA8','#D4A853','#7B68AA','#4A5F9E','#f9e04b','#ff7eb3','#7aedcf'];
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='cp';
+      el.style.left=Math.random()*100+'vw';
+      el.style.background=colors[Math.floor(Math.random()*colors.length)];
+      el.style.width =(8+Math.random()*8)+'px';
+      el.style.height=(12+Math.random()*10)+'px';
+      el.style.borderRadius=Math.random()>.5?'50%':'2px';
+      el.style.animationDuration=(2.5+Math.random()*2)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),5000);
+    },i*35);
+  }
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
