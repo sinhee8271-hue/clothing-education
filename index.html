@@ -644,7 +644,7 @@ function showResult(score){
 
   document.getElementById('ansNote').classList.add('show');
   panel.scrollIntoView({behavior:'smooth',block:'center'});
-const studentName = prompt("이름을 입력하세요");
+const studentName = prompt("이름을 입력하세요") || "익명";
 
 fetch("https://script.google.com/macros/s/AKfycbxSEeEDM4jFwzNNbi7-6QQLjX65xp06TUWUeErd-arh2ef0zSdqcx9GxAbkJC6kO0I/exec", {
   method: "POST",
