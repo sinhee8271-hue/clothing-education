@@ -288,12 +288,11 @@
 
 <!-- Answer Note -->
 <div class="ans-note" id="ansNote">
-  <button class="retry-btn" onclick="toggleAnswers()" style="margin-bottom:15px;">
+<button class="retry-btn" id="toggleBtn" onclick="toggleAnswers()" style="margin-bottom:15px;">
     📋 정답 해설 모아보기
   </button>
 
   <div id="answerWrap" style="display:none;">
-    <h3 id="ansNoteTitle">정답 해설 모음</h3>
     <ul id="ansList"></ul>
   </div>
 </div>
@@ -429,6 +428,11 @@ function updateLanguageText(){
     currentLang === 'ko' ? '예: 너무 빨랐어요 / 이 부분이 어려웠어요 / 이런 내용이 추가되면 좋을 것 같아요...' :
     currentLang === 'en' ? 'Example: Too fast / This part was hard / Adding this would be helpful...' :
     '例如：太快了 / 这部分很难 / 加入这些内容会很好...';
+  document.getElementById('toggleBtn').textContent =
+currentLang === 'ko' ? '📋 정답 해설 모아보기' :
+currentLang === 'en' ? '📋 View Answers' :
+'📋 查看答案解说';
+  document.getElementById("answerWrap").style.display = "none";
   buildQuiz();
 }
 
