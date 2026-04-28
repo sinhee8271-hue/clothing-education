@@ -586,8 +586,8 @@ function showResult(score){
 
   if(score === 0) document.getElementById('zeroBox').classList.add('show');
 
+  // ... (중간 점수 계산 및 메시지 설정 부분은 기존과 동일) ...
   let emoji, stars, title, msg;
-  // 점수별 메시지 설정 (간략화 버전)
   if(score===total){ emoji='🎉'; stars='⭐⭐⭐⭐⭐'; title='완벽해요!'; msg='의복 디자인 요소를 완벽하게 이해했군요!'; }
   else if(score>=6){ emoji='😊'; stars='⭐⭐⭐⭐'; title='거의 다 맞혔어요!'; msg='아쉽게 몇 문제 틀렸지만 훌륭합니다!'; }
   else { emoji='😅'; stars='⭐⭐'; title='조금 더 공부가 필요해요!'; msg='해설을 읽고 다시 도전해 보세요!'; }
@@ -609,19 +609,21 @@ function showResult(score){
   document.getElementById('ansNote').classList.add('show');
   panel.scrollIntoView({behavior:'smooth',block:'center'});
 
-  // --- [이름 자동 처리 및 전송] ---
-  let nm = prompt("이름을 입력하세요 (안 쓰면 자동으로 학생 번호가 붙습니다)");
-  if (!nm || nm.trim() === "") {
-    nm = "학생_" + Math.floor(Math.random() * 10000);
-  }
-  
+  // --- [핵심 수정: 이름 입력 없이 즉시 랜덤 번호 부여] ---
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
+  const nm = "학생_" + randomNum;
+
+  // 채점하기 버튼 밑에 번호 표시 (누군지 증명용)
   const nameTag = document.getElementById('userNameTag');
   if(nameTag) {
-    nameTag.textContent = "참여자: " + nm;
+    nameTag.textContent = "나의 번호: " + nm;
     nameTag.style.background = "rgba(255,255,255,0.2)";
     nameTag.style.padding = "8px 20px";
     nameTag.style.borderRadius = "20px";
     nameTag.style.display = "inline-block";
+    nameTag.style.marginTop = "15px";
+    nameTag.style.color = "white";
+    nameTag.style.fontWeight = "700";
   }
   
   fetch("https://script.google.com/macros/s/AKfycbxso97Tq0sxQ0mbZsWnawNgVVBbNYrRGyL7hsMr6he34vWRvFla4WFILWoZSQXqvg/exec", {
