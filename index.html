@@ -260,7 +260,7 @@
   <!-- Prize Result (hidden until triggered) -->
   <div class="prize-result" id="prizeBox">
     <div class="pi">🏆🎁</div>
-    <h2 id="prizeTitle">선착순 당첨! 앞으로 나와 주세요!</h2>
+    <h2 id="prizeTitle">선착순 당첨! </h2>
     <p id="prizeMsg"></p>
   </div>
 
@@ -619,26 +619,41 @@ function showResult(score){
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({ name: nm, score: score })
   })
-  .then(res => res.json()) // 💡 이제 구글 시트의 대답을 JSON으로 읽습니다.
-  .then(resultObj => {
-    console.log("서버 응답 확인:", resultObj);
+  .then(res => {
+    // 응답이 오면 일단 텍스트로 받아서 분석 (에러 방지)
+    return res.text();
+  })
+  .then(text => {
+    console.log("서버 원본 응답:", text);
+    const resultObj = JSON.parse(text);
 
-    // 당첨인 경우 (isWinner가 true일 때) 화면에 당첨 창 표시
-    if(resultObj.isWinner){
-      const prizeTitle = document.getElementById('prizeTitle');
+    // 💡 당첨 판정 로직
+    if (resultObj.isWinner || resultObj.winnerOrder > 0) {
       const prizeBox = document.getElementById('prizeBox');
+      const prizeTitle = document.getElementById('prizeTitle');
       
-      if(prizeTitle && prizeBox) {
+      if (prizeBox && prizeTitle) {
+        // 1등, 2등 텍스트 설정
         prizeTitle.textContent = resultObj.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
+        
+        // CSS 클래스 추가하여 화면에 표시
+        prizeBox.style.display = "block"; 
         prizeBox.classList.add('show');
         
-        // 폭죽 효과가 있다면 실행
-        if(typeof launchConfetti === 'function') launchConfetti(120);
+        // 만약 폭죽 함수가 없어도 에러 안 나게 처리
+        try {
+          if (typeof launchConfetti === 'function') launchConfetti(120);
+        } catch(e) { console.log("폭죽 효과 실행 실패(무시가능)"); }
+        
+        // 화면 하단으로 자동 스크롤하여 당첨 확인 유도
+        prizeBox.scrollIntoView({behavior:'smooth'});
       }
     }
   })
   .catch(err => {
-    console.error("데이터 전송 또는 결과 확인 중 에러:", err);
+    console.error("전송 중 에러 발생:", err);
+    // 에러가 나도 만점이라면 혹시 모르니 확인해보라는 메시지 출력(디버깅용)
+    if(score === 8) alert("데이터 전송 중 통신 오류가 있었으나, 만점입니다! 선생님께 확인받으세요.");
   });
 } // showResult 함수 끝
 
