@@ -614,18 +614,33 @@ function showResult(score){
     nm = "학생_" + Math.floor(Math.random() * 1000);
   }
 
-  fetch("https://script.google.com/macros/s/AKfycbwzA5I9eXPnktX05BeOFQ9lHZvvLzMzZRGxxTjy5WC3Ph_7BBZV24mc21goSBf-g0AU/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbxso97Tq0sxQ0mbZsWnawNgVVBbNYrRGyL7hsMr6he34vWRvFla4WFILWoZSQXqvg/exec", {
     method: "POST",
-    mode: "no-cors", // 💡 CORS 에러 방지를 위해 추가했습니다.
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({ name: nm, score: score })
   })
-  .then(res => {
-    // no-cors 모드에서는 응답을 읽을 수 없지만 시트 기록은 됩니다.
-    console.log("데이터 전송 시도 완료");
+  .then(res => res.json()) // 💡 이제 구글 시트의 대답을 JSON으로 읽습니다.
+  .then(resultObj => {
+    console.log("서버 응답 확인:", resultObj);
+
+    // 당첨인 경우 (isWinner가 true일 때) 화면에 당첨 창 표시
+    if(resultObj.isWinner){
+      const prizeTitle = document.getElementById('prizeTitle');
+      const prizeBox = document.getElementById('prizeBox');
+      
+      if(prizeTitle && prizeBox) {
+        prizeTitle.textContent = resultObj.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
+        prizeBox.classList.add('show');
+        
+        // 폭죽 효과가 있다면 실행
+        if(typeof launchConfetti === 'function') launchConfetti(120);
+      }
+    }
   })
-  .catch(err => console.error("전송 에러:", err));
-}
+  .catch(err => {
+    console.error("데이터 전송 또는 결과 확인 중 에러:", err);
+  });
+} // showResult 함수 끝
 
 function toggleAnswers(){
   const box = document.getElementById("answerWrap");
