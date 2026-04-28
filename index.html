@@ -436,10 +436,6 @@ currentLang === 'en' ? '📋 View Answers' :
   buildQuiz();
 }
 
-// ── 선착순 2명 관리 (localStorage) ─────────────────────────────────
-const PRIZE_KEY = 'prizeCount_v1';
-function getPrizeCount(){ return parseInt(localStorage.getItem(PRIZE_KEY)||'0'); }
-function incPrizeCount(){ localStorage.setItem(PRIZE_KEY, getPrizeCount()+1); }
 
 // ── 색상 순서 ────────────────────────────────────────────────────
 const CA = ['--coral','--teal','--gold','--purp','--navy','--teal','--coral','--gold'];
@@ -590,20 +586,7 @@ function showResult(score){
   if(score === 0){
     document.getElementById('zeroBox').classList.add('show');
   }
-
-  if(score === total){
-    const cnt = getPrizeCount();
-    if(cnt < 2){
-      incPrizeCount();
-      const newCnt = getPrizeCount();
-      document.getElementById('prizeTitle').textContent = newCnt===1 ? data.prizeTitle1 : data.prizeTitle2;
-      document.getElementById('prizeMsg').innerHTML = data.prizeMsgText;
-      document.getElementById('prizeBox').classList.add('show');
-      launchConfetti(120);
-    } else {
-      launchConfetti(80);
-    }
-  }
+ 
 
   let emoji, stars, title, msg;
   if(score===total){
@@ -644,14 +627,27 @@ function showResult(score){
 
   document.getElementById('ansNote').classList.add('show');
   panel.scrollIntoView({behavior:'smooth',block:'center'});
-const studentName = prompt("이름을 입력하세요");
+const studentName = prompt("이름을 입력하세요") || "익명";
 
-fetch("https://script.google.com/macros/s/AKfycbxSEeEDM4jFwzNNbi7-6QQLjX65xp06TUWUeErd-arh2ef0zSdqcx9GxAbkJC6kO0I/exec", {
+fetch("https://script.google.com/macros/s/AKfycbxWjiHbYgj8E1bzdnU8kRA8fOdqI5Hg_HDEpABQ8wT___sM7uqNbIuu6Rpr0DPhlwHQ/exec", {
   method: "POST",
   body: JSON.stringify({
     name: studentName,
     score: score
   })
+})
+.then(res => res.json())
+.then(result => {
+  if(result.isWinner){
+    document.getElementById('prizeTitle').textContent =
+      result.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
+
+    document.getElementById('prizeMsg').innerHTML =
+      "선착순 당첨!";
+
+    document.getElementById('prizeBox').classList.add('show');
+    launchConfetti(120);
+  }
 });
 }
 
