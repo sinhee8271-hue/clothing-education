@@ -627,45 +627,37 @@ function showResult(score){
 
   document.getElementById('ansNote').classList.add('show');
   panel.scrollIntoView({behavior:'smooth',block:'center'});
-const studentName = prompt("이름을 입력하세요") || "익명";
+const finalUserName = prompt("이름을 입력하세요") || "익명";
 
-const studentName = prompt("이름을 입력하세요") || "익명";
-
-fetch("https://script.google.com/macros/s/AKfycbzU3B1FQtODaqfKvVlEVkNFPxufXhYu5hUJZU1Y-sr9VuEKL1gcIrry-1iCoHEs1gbZ/exec", {
-  method: "POST",
-  headers: {
-    // 💡 중요: GAS 서버와의 통신을 위해 일반 텍스트 형식을 사용합니다.
-    "Content-Type": "text/plain;charset=utf-8"
-  },
-  body: JSON.stringify({
-    name: studentName,
-    score: score
+  fetch("https://script.google.com/macros/s/AKfycbzU3B1FQtODaqfKvVlEVkNFPxufXhYu5hUJZU1Y-sr9VuEKL1gcIrry-1iCoHEs1gbZ/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+      name: finalUserName,
+      score: score
+    })
   })
-})
-.then(res => res.text()) // 서버에서 보낸 응답(텍스트)을 받습니다.
-.then(text => {
-  // 💡 수정됨: 먼저 텍스트를 JSON으로 변환한 뒤 'resultObj'라는 변수에 담습니다.
-  const resultObj = JSON.parse(text);
-  console.log("서버 응답 결과:", resultObj);
+  .then(res => res.text())
+  .then(text => {
+    const resultObj = JSON.parse(text);
+    console.log("서버 결과:", resultObj);
 
-  // 당첨자 여부 확인
-  if(resultObj.isWinner){
-    document.getElementById('prizeTitle').textContent =
-      resultObj.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
+    if(resultObj.isWinner){
+      document.getElementById('prizeTitle').textContent =
+        resultObj.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
 
-    document.getElementById('prizeMsg').innerHTML = "선착순 당첨! 앞으로 나와주세요! 🎁";
-    document.getElementById('prizeBox').classList.add('show');
-    
-    // 폭죽 효과 함수가 있다면 실행 (없으면 무시됨)
-    if(typeof launchConfetti === 'function') launchConfetti(120);
-  }
-})
-.catch(err => {
-  console.error("데이터 저장 중 오류가 발생했습니다:", err);
-  alert("점수 저장에 실패했습니다. 인터넷 연결을 확인해주세요.");
-});
+      document.getElementById('prizeMsg').innerHTML = "선착순 당첨!🎁";
+      document.getElementById('prizeBox').classList.add('show');
+      
+      if(typeof launchConfetti === 'function') launchConfetti(120);
+    }
+  })
+  .catch(err => {
+    console.error("데이터 전송 에러:", err);
+  });
 }
-
 function submitFeedback(){
   document.getElementById('feedbackSection').classList.add('show');
   document.getElementById('feedbackSection').scrollIntoView({behavior:'smooth',block:'center'});
