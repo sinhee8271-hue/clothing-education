@@ -670,7 +670,52 @@ function toggleAnswers(){
 function retryQuiz(){
   location.reload();
 }
+// [추가] 피드백 입력창 보여주기 버튼 기능
+function submitFeedback() {
+  const fbSection = document.getElementById('feedbackSection');
+  if(fbSection) {
+    fbSection.style.display = 'block';
+    fbSection.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
+// [추가] 피드백 데이터를 구글 시트로 전송하는 기능
+function saveFeedback() {
+  const fbText = document.getElementById('feedbackText').value;
+  const saveBtn = document.getElementById('saveFeedbackBtn');
+  const successMsg = document.getElementById('successMsg');
+
+  if (!fbText.trim()) {
+    alert("내용을 입력해 주세요! 😊");
+    return;
+  }
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = "전송 중...";
+
+  // 퀴즈 전송 주소와 동일한 주소를 사용합니다.
+  fetch("https://script.google.com/macros/s/AKfycbzSoaSsx7LPgtC3bBkku0bMUCYJ5-_zLc8kVDDZpHNXGCM9UwrcUpLrW-m7KIypPx76/exec", {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({
+      type: "feedback", // 서버에서 피드백임을 구분
+      content: fbText
+    })
+  })
+  .then(res => res.json())
+  .then(result => {
+    if(successMsg) successMsg.style.display = 'block';
+    document.getElementById('feedbackText').value = ""; // 입력창 초기화
+    saveBtn.textContent = "제출 완료 ✅";
+  })
+  .catch(err => {
+    console.error("피드백 전송 에러:", err);
+    alert("전송에 실패했습니다. 다시 시도해 주세요.");
+    saveBtn.disabled = false;
+    saveBtn.textContent = "제출하기";
+  });
+}
+  
 // 퀴즈 생성 실행
 buildQuiz();
 </script>
