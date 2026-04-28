@@ -636,8 +636,12 @@ fetch("https://script.google.com/macros/s/AKfycbxWjiHbYgj8E1bzdnU8kRA8fOdqI5Hg_H
     score: score
   })
 })
-.then(res => res.json())
-.then(result => {
+.then(res => res.text())
+.then(text => {
+  console.log("서버응답:", text);
+
+  const result = JSON.parse(text);
+
   if(result.isWinner){
     document.getElementById('prizeTitle').textContent =
       result.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
@@ -648,6 +652,9 @@ fetch("https://script.google.com/macros/s/AKfycbxWjiHbYgj8E1bzdnU8kRA8fOdqI5Hg_H
     document.getElementById('prizeBox').classList.add('show');
     launchConfetti(120);
   }
+})
+.catch(err => {
+  console.error("에러:", err);
 });
 }
 
