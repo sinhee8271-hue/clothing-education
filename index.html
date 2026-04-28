@@ -616,27 +616,20 @@ function showResult(score){
 
   fetch("https://script.google.com/macros/s/AKfycbwzA5I9eXPnktX05BeOFQ9lHZvvLzMzZRGxxTjy5WC3Ph_7BBZV24mc21goSBf-g0AU/exec", {
     method: "POST",
+    mode: "no-cors", // 💡 CORS 에러 방지를 위해 추가했습니다.
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({ name: nm, score: score })
   })
-  .then(res => res.text())
-  .then(text => {
-    try {
-      const resultObj = JSON.parse(text);
-      if(resultObj.isWinner){
-        document.getElementById('prizeTitle').textContent = resultObj.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
-        document.getElementById('prizeBox').classList.add('show');
-        if(typeof launchConfetti === 'function') launchConfetti(120);
-      }
-    } catch(e) { console.log("결과 해석 오류"); }
+  .then(res => {
+    // no-cors 모드에서는 응답을 읽을 수 없지만 시트 기록은 됩니다.
+    console.log("데이터 전송 시도 완료");
   })
   .catch(err => console.error("전송 에러:", err));
 }
 
-// 나머지 필수 함수들
 function toggleAnswers(){
   const box = document.getElementById("answerWrap");
-  box.style.display = (box.style.display === "none") ? "block" : "none";
+  if(box) box.style.display = (box.style.display === "none") ? "block" : "none";
 }
 
 function retryQuiz(){
