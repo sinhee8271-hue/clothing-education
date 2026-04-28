@@ -614,7 +614,7 @@ function showResult(score){
     nm = "학생_" + Math.floor(Math.random() * 1000);
   }
 
-  fetch("https://script.google.com/macros/s/AKfycbzU3B1FQtODaqfKvVlEVkNFPxufXhYu5hUJZU1Y-sr9VuEKL1gcIrry-1iCoHEs1gbZ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbwzA5I9eXPnktX05BeOFQ9lHZvvLzMzZRGxxTjy5WC3Ph_7BBZV24mc21goSBf-g0AU/exec", {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({ name: nm, score: score })
