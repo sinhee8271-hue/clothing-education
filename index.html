@@ -487,6 +487,7 @@ let submitted = false;
 function buildQuiz(){
   const area = document.getElementById('quizArea');
   area.innerHTML = '';
+  answered.fill(null);
   const QS = QS_DATA[currentLang];
   QS.forEach((q, qi) => {
     const ca = `var(${CA[qi]})`;
