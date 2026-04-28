@@ -583,34 +583,13 @@ function showResult(score){
   const panel = document.getElementById('resultPanel');
   const data = LANG_DATA[currentLang];
 
-  if(score === 0){
-    document.getElementById('zeroBox').classList.add('show');
-  }
- 
+  if(score === 0) document.getElementById('zeroBox').classList.add('show');
 
   let emoji, stars, title, msg;
-  if(score===total){
-    emoji='🎉'; stars='⭐⭐⭐⭐⭐';
-    title = currentLang==='ko'?'완벽해요! 8문제 모두 정답!':currentLang==='en'?'Perfect! All 8 correct!':'完美！全部8道题都答对了！';
-    msg = currentLang==='ko'?'의복 디자인 요소를 완벽하게 이해했군요!<br>오늘 배운 내용을 실생활에서도 꼭 활용해 보세요 👏':currentLang==='en'?'You perfectly understand clothing design elements!<br>Please apply what you learned to your daily life! 👏':'你完美地理解了服装设计要素！<br>请在日常生活中应用今天学的内容！👏';
-  } else if(score>=6){
-    emoji='😊'; stars='⭐⭐⭐⭐';
-    const wrong = total-score;
-    title = currentLang==='ko'?`${score}문제 정답! 거의 다 맞혔어요!`:currentLang==='en'?`${score} correct! Almost there!`:`${score}道答对！几乎全对了！`;
-    msg = currentLang==='ko'?`아쉽게 ${wrong}문제를 틀렸어요.<br>틀린 문제의 해설을 다시 확인해 보세요!`:currentLang==='en'?`You got ${wrong} wrong.<br>Review the explanations for incorrect answers!`:`你有${wrong}道答错了。<br>请重新检查错误答案的解说！`;
-  } else if(score>=4){
-    emoji='🙂'; stars='⭐⭐⭐';
-    title = currentLang==='ko'?`${score}문제 정답! 절반 이상 맞혔어요!`:currentLang==='en'?`${score} correct! Over half!`:`${score}道答对！答对了一半以上！`;
-    msg = currentLang==='ko'?'아래 해설을 잘 읽고 헷갈리는 개념을 다시 공부해 봐요.<br>조금만 더 노력하면 완벽하게 이해할 수 있어요!':currentLang==='en'?'Read the explanations and study confusing concepts carefully.<br>With a little more effort, you\'ll understand perfectly!':'认真阅读解说，重新学习困惑的概念。<br>再努力一点你就能完美理解了！';
-  } else if(score>=1){
-    emoji='😅'; stars='⭐⭐';
-    title = currentLang==='ko'?`${score}문제 정답! 조금 더 공부가 필요해요!`:currentLang==='en'?`${score} correct! More study needed!`:`${score}道答对！你需要多学习！`;
-    msg = currentLang==='ko'?'수업 내용을 다시 한번 살펴보고 아래 해설을 꼭 읽어 보세요.<br>다시 도전하면 훨씬 좋은 결과가 있을 거예요!':currentLang==='en'?'Review the content and read the explanations.<br>Try again for better results!':'再次查看课程内容，仔细阅读解说。<br>如果再试一次，你会得到更好的结果！';
-  } else {
-    emoji='😢'; stars='⭐';
-    title = currentLang==='ko'?'아직 개념이 낯설 수 있어요!':currentLang==='en'?'Concepts are new to you!':'概念对你来说还很陌生！';
-    msg = currentLang==='ko'?'처음이니까 괜찮아요. 포기하지 말고 다시 도전해 봐요!':currentLang==='en'?'It\'s okay! Don\'t give up and try again!':'没关系！不要放弃，再试一次！';
-  }
+  // 점수별 메시지 설정 (간략화 버전)
+  if(score===total){ emoji='🎉'; stars='⭐⭐⭐⭐⭐'; title='완벽해요!'; msg='의복 디자인 요소를 완벽하게 이해했군요!'; }
+  else if(score>=6){ emoji='😊'; stars='⭐⭐⭐⭐'; title='거의 다 맞혔어요!'; msg='아쉽게 몇 문제 틀렸지만 훌륭합니다!'; }
+  else { emoji='😅'; stars='⭐⭐'; title='조금 더 공부가 필요해요!'; msg='해설을 읽고 다시 도전해 보세요!'; }
 
   document.getElementById('rEmoji').textContent = emoji;
   document.getElementById('rStars').textContent = stars;
@@ -620,6 +599,7 @@ function showResult(score){
   document.getElementById('rMsg').innerHTML = msg;
   document.getElementById('sPct').textContent = data.rateMsg(pct);
   panel.classList.add('show');
+  
   setTimeout(()=>{ 
     const fill = document.getElementById('sBarFill');
     if(fill) fill.style.width = pct+'%'; 
@@ -627,97 +607,43 @@ function showResult(score){
 
   document.getElementById('ansNote').classList.add('show');
   panel.scrollIntoView({behavior:'smooth',block:'center'});
-const finalQuizName = prompt("이름을 입력하세요") || "익명";
 
-  // 2. 서버로 보낼 때도 똑같이 'finalQuizName' 상자를 사용합니다.
+  // --- [이름 자동 처리 및 전송] ---
+  let nm = prompt("이름을 입력하세요 (안 쓰면 자동으로 학생 번호가 붙습니다)");
+  if (!nm || nm.trim() === "") {
+    nm = "학생_" + Math.floor(Math.random() * 1000);
+  }
+
   fetch("https://script.google.com/macros/s/AKfycbzU3B1FQtODaqfKvVlEVkNFPxufXhYu5hUJZU1Y-sr9VuEKL1gcIrry-1iCoHEs1gbZ/exec", {
     method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify({
-      name: finalQuizName, // 💡 여기서 에러가 났던 건데, 이제 위랑 이름이 같습니다!
-      score: score
-    })
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ name: nm, score: score })
   })
   .then(res => res.text())
   .then(text => {
-    const resultObj = JSON.parse(text);
-    console.log("서버 결과:", resultObj);
-
-    if(resultObj.isWinner){
-      document.getElementById('prizeTitle').textContent =
-        resultObj.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
-
-      document.getElementById('prizeMsg').innerHTML = "선착순 당첨!🎁";
-      document.getElementById('prizeBox').classList.add('show');
-      
-      if(typeof launchConfetti === 'function') launchConfetti(120);
-    }
+    try {
+      const resultObj = JSON.parse(text);
+      if(resultObj.isWinner){
+        document.getElementById('prizeTitle').textContent = resultObj.winnerOrder === 1 ? "🎉 1등 당첨!" : "🎉 2등 당첨!";
+        document.getElementById('prizeBox').classList.add('show');
+        if(typeof launchConfetti === 'function') launchConfetti(120);
+      }
+    } catch(e) { console.log("결과 해석 오류"); }
   })
-  .catch(err => {
-    console.error("데이터 전송 에러:", err);
-  });
-}
-function submitFeedback(){
-  document.getElementById('feedbackSection').classList.add('show');
-  document.getElementById('feedbackSection').scrollIntoView({behavior:'smooth',block:'center'});
-  document.getElementById('feedbackText').focus();
+  .catch(err => console.error("전송 에러:", err));
 }
 
-function saveFeedback(){
-  const feedback = document.getElementById('feedbackText').value;
-  if(feedback.trim()){
-    localStorage.setItem('feedback_' + Date.now(), feedback);
-    document.getElementById('feedbackText').value = '';
-    document.getElementById('successMsg').classList.add('show');
-    setTimeout(()=>{
-      document.getElementById('successMsg').classList.remove('show');
-    },3000);
-  }
+// 나머지 필수 함수들
+function toggleAnswers(){
+  const box = document.getElementById("answerWrap");
+  box.style.display = (box.style.display === "none") ? "block" : "none";
 }
 
 function retryQuiz(){
-  submitted = false;
-  answered.fill(null);
-  ['resultPanel','ansNote','prizeBox','zeroBox','feedbackSection'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.remove('show');
-  });
-  document.getElementById('subBtn').disabled = false;
-  const fill = document.getElementById('sBarFill');
-  if(fill) fill.style.width = '0%';
-  document.getElementById('successMsg').classList.remove('show');
-  buildQuiz();
-  window.scrollTo({top:0,behavior:'smooth'});
+  location.reload();
 }
 
-function launchConfetti(n){
-  const colors=['#E07B6A','#5BABA8','#D4A853','#7B68AA','#4A5F9E','#f9e04b','#ff7eb3','#7aedcf'];
-  for(let i=0;i<n;i++){
-    setTimeout(()=>{
-      const el=document.createElement('div');
-      el.className='cp';
-      el.style.left=Math.random()*100+'vw';
-      el.style.background=colors[Math.floor(Math.random()*colors.length)];
-      el.style.width =(8+Math.random()*8)+'px';
-      el.style.height=(12+Math.random()*10)+'px';
-      el.style.borderRadius=Math.random()>.5?'50%':'2px';
-      el.style.animationDuration=(2.5+Math.random()*2)+'s';
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(),5000);
-    },i*35);
-  }
-}
-function toggleAnswers(){
-  const box = document.getElementById("answerWrap");
-
-  if(box.style.display === "none"){
-    box.style.display = "block";
-  }else{
-    box.style.display = "none";
-  }
-}
+// 퀴즈 생성 실행
 buildQuiz();
 </script>
 </body>
