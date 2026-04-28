@@ -253,8 +253,9 @@
   <div id="quizArea"></div>
 
   <!-- Submit -->
-  <div class="sub-wrap">
+ <div class="sub-wrap">
     <button class="sub-btn" id="subBtn" onclick="submitAll()">채점하기 ✏️</button>
+    <div id="userNameTag" style="margin-top:15px; font-weight:700; color:white; font-size:16px;"></div>
   </div>
 
   <!-- Prize Result (hidden until triggered) -->
@@ -611,9 +612,18 @@ function showResult(score){
   // --- [이름 자동 처리 및 전송] ---
   let nm = prompt("이름을 입력하세요 (안 쓰면 자동으로 학생 번호가 붙습니다)");
   if (!nm || nm.trim() === "") {
-    nm = "학생_" + Math.floor(Math.random() * 1000);
+    nm = "학생_" + Math.floor(Math.random() * 100);
   }
-
+  
+  const nameTag = document.getElementById('userNameTag');
+  if(nameTag) {
+    nameTag.textContent = "참여자: " + nm;
+    nameTag.style.background = "rgba(255,255,255,0.2)";
+    nameTag.style.padding = "8px 20px";
+    nameTag.style.borderRadius = "20px";
+    nameTag.style.display = "inline-block";
+  }
+  
   fetch("https://script.google.com/macros/s/AKfycbxso97Tq0sxQ0mbZsWnawNgVVBbNYrRGyL7hsMr6he34vWRvFla4WFILWoZSQXqvg/exec", {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
