@@ -286,11 +286,17 @@
     <button class="retry-btn" onclick="submitFeedback()" style="background:var(--purp);" id="feedbackBtn">📝 피드백 작성</button>
   </div>
 
-  <!-- Answer Note -->
-  <div class="ans-note" id="ansNote">
-    <h3 id="ansNoteTitle">📋 정답 해설 모아보기</h3>
+<!-- Answer Note -->
+<div class="ans-note" id="ansNote">
+  <button class="retry-btn" onclick="toggleAnswers()" style="margin-bottom:15px;">
+    📋 정답 해설 모아보기
+  </button>
+
+  <div id="answerWrap" style="display:none;">
+    <h3 id="ansNoteTitle">정답 해설 모음</h3>
     <ul id="ansList"></ul>
   </div>
+</div>
 
   <!-- Feedback Section -->
   <div class="feedback-section" id="feedbackSection">
@@ -695,7 +701,15 @@ function launchConfetti(n){
     },i*35);
   }
 }
+function toggleAnswers(){
+  const box = document.getElementById("answerWrap");
 
+  if(box.style.display === "none"){
+    box.style.display = "block";
+  }else{
+    box.style.display = "none";
+  }
+}
 buildQuiz();
 </script>
 </body>
