@@ -399,8 +399,6 @@ let currentLang = 'ko';
 
 function changeLang(lang){
   currentLang = lang;
-
-  
   ['ko','en','zh'].forEach(l=>{
     const btn = document.getElementById(`btn${l.toUpperCase()}`);
     if(btn) btn.classList.toggle('active',l===lang);
@@ -419,6 +417,7 @@ function updateLanguageText(){
   document.getElementById('pLabel').textContent = `0 / 8 ${data.completeText}`;
   document.getElementById('subBtn').textContent = data.submitText;
   document.getElementById('feedbackBtn').textContent = data.feedbackBtnText;
+  document.getElementById('ansNoteTitle').textContent = data.ansNoteTitle;
   document.getElementById('fbTitle').textContent = data.fbTitle;
   document.getElementById('fbDescription').textContent = data.fbDescription;
   document.getElementById('saveFeedbackBtn').textContent = data.saveFeedbackBtn;
@@ -486,7 +485,6 @@ let submitted = false;
 function buildQuiz(){
   const area = document.getElementById('quizArea');
   area.innerHTML = '';
-  answered.fill(null);
   const QS = QS_DATA[currentLang];
   QS.forEach((q, qi) => {
     const ca = `var(${CA[qi]})`;
@@ -646,7 +644,7 @@ function showResult(score){
 
   document.getElementById('ansNote').classList.add('show');
   panel.scrollIntoView({behavior:'smooth',block:'center'});
-const studentName = prompt("이름을 입력하세요") || "익명";
+const studentName = prompt("이름을 입력하세요");
 
 fetch("https://script.google.com/macros/s/AKfycbxSEeEDM4jFwzNNbi7-6QQLjX65xp06TUWUeErd-arh2ef0zSdqcx9GxAbkJC6kO0I/exec", {
   method: "POST",
@@ -716,7 +714,7 @@ function toggleAnswers(){
     box.style.display = "none";
   }
 }
-updateLanguageText();
+buildQuiz();
 </script>
 </body>
 </html>
