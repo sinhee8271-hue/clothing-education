@@ -400,8 +400,6 @@ let currentLang = 'ko';
 function changeLang(lang){
   currentLang = lang;
 
-  answered.fill(null);
-  submitted = false;
   
   ['ko','en','zh'].forEach(l=>{
     const btn = document.getElementById(`btn${l.toUpperCase()}`);
