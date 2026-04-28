@@ -23,8 +23,24 @@
   }
   .wrap{max-width:860px;margin:0 auto;}
 
+  /* Language Bar */
+  .lang-bar{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    background:rgba(15,12,41,0.95);backdrop-filter:blur(10px);
+    padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.1);
+    display:flex;justify-content:flex-end;align-items:center;gap:8px;
+  }
+  .lang-bar span{font-size:12px;opacity:0.7;color:#fff;margin-right:8px;}
+  .lang-btn{
+    padding:6px 14px;border:1.5px solid rgba(255,255,255,0.3);border-radius:20px;
+    background:transparent;color:#fff;font-size:12px;cursor:pointer;
+    transition:all 0.3s;font-family:'Noto Sans KR',sans-serif;font-weight:500;
+  }
+  .lang-btn:hover{background:rgba(108,92,231,0.6);border-color:#6c5ce7;}
+  .lang-btn.active{background:rgba(108,92,231,0.9);border-color:#6c5ce7;}
+
   /* Header */
-  .hd{text-align:center;margin-bottom:36px;}
+  .hd{text-align:center;margin-bottom:36px;margin-top:60px;}
   .hd .tag{display:inline-block;background:var(--coral);color:#fff;font-size:12px;font-weight:700;
     letter-spacing:1.5px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
   .hd h1{color:#fff;font-size:28px;font-weight:900;line-height:1.35;margin-bottom:8px;}
@@ -144,7 +160,7 @@
   /* Retry */
   .retry-btn{background:var(--navy);color:#fff;border:none;padding:14px 44px;
     font-size:15px;font-weight:700;border-radius:50px;cursor:pointer;
-    font-family:'Noto Sans KR',sans-serif;transition:all .2s;margin-top:8px;}
+    font-family:'Noto Sans KR',sans-serif;transition:all .2s;margin-top:8px;margin-right:8px;}
   .retry-btn:hover{background:var(--mnavy);transform:translateY(-2px);}
 
   /* Answer note */
@@ -156,6 +172,41 @@
   .ans-note li{font-size:13px;color:var(--dark);}
   .ans-note li b{color:var(--navy);margin-right:6px;}
 
+  /* Feedback Section */
+  .feedback-section{
+    display:none;background:#fff;border-radius:20px;padding:32px 34px;
+    margin-bottom:28px;box-shadow:0 8px 32px rgba(0,0,0,.18);
+    border-left:6px solid var(--gold);
+  }
+  .feedback-section.show{display:block;}
+  .feedback-section h3{font-size:18px;font-weight:900;color:var(--navy);margin-bottom:6px;}
+  .feedback-section p{font-size:13px;color:var(--gray);margin-bottom:18px;}
+  .feedback-textarea{
+    width:100%;min-height:120px;padding:14px 16px;
+    border:2px solid #E8E8E8;border-radius:12px;
+    font-family:'Noto Sans KR',sans-serif;font-size:14px;
+    resize:vertical;transition:all .2s;
+  }
+  .feedback-textarea:focus{
+    outline:none;border-color:var(--gold);background:#fff;
+    box-shadow:0 0 0 3px rgba(212,168,83,0.1);
+  }
+  .feedback-btn{
+    background:linear-gradient(135deg,var(--gold),#c4933f);color:#fff;border:none;
+    padding:12px 32px;font-size:15px;font-weight:700;border-radius:50px;
+    cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+    box-shadow:0 4px 16px rgba(212,168,83,0.3);transition:all .2s;margin-top:12px;
+  }
+  .feedback-btn:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(212,168,83,0.4);}
+  .feedback-note{font-size:12px;color:var(--gray);margin-top:8px;font-style:italic;}
+
+  /* Success message */
+  .success-msg{
+    display:none;background:var(--steal);color:#2e7a77;border-left:4px solid var(--teal);
+    border-radius:10px;padding:14px 16px;margin-top:12px;font-size:14px;font-weight:600;
+  }
+  .success-msg.show{display:block;animation:popIn .4s ease;}
+
   /* Confetti */
   .cp{position:fixed;width:10px;height:14px;top:-20px;opacity:0;
     animation:fall linear forwards;border-radius:2px;z-index:999;}
@@ -166,21 +217,29 @@
 </style>
 </head>
 <body>
+<!-- Language Bar -->
+<div class="lang-bar">
+  <span id="langLabel">언어 / Language / 语言:</span>
+  <button class="lang-btn active" onclick="changeLang('ko')" id="btnKo">한국어 🇰🇷</button>
+  <button class="lang-btn" onclick="changeLang('en')" id="btnEn">English 🇺🇸</button>
+  <button class="lang-btn" onclick="changeLang('zh')" id="btnZh">中文 🇨🇳</button>
+</div>
+
 <div class="wrap">
 
   <!-- Header -->
   <div class="hd">
-    <div class="tag">기술과 가정 · 의복의 기능과 요소</div>
-    <h1>자기표현을 위한<br>옷차림과 의복 디자인</h1>
-    <p>배운 내용을 확인해 봅시다 — 총 8문제</p>
+    <div class="tag" id="tagText">기술과 가정 · 의복의 기능과 요소</div>
+    <h1 id="h1Text">자기표현을 위한<br>옷차림과 의복 디자인</h1>
+    <p id="pHeader">배운 내용을 확인해 봅시다 — 총 8문제</p>
   </div>
 
   <!-- Prize Banner -->
   <div class="prize-banner">
     <div class="icon">🎁</div>
     <div>
-      <p>8문제를 모두 맞힌 선착순 2명에게 선물이 있어요!</p>
-      <span>전부 맞히면 앞으로 나와서 선물을 받아 가세요 🎉</span>
+      <p id="prizeText">8문제를 모두 맞힌 선착순 2명에게 선물이 있어요!</p>
+      <span id="prizeSubText">전부 맞히면 앞으로 나와서 선물을 받아 가세요 🎉</span>
     </div>
   </div>
 
@@ -208,8 +267,8 @@
   <!-- Zero Result -->
   <div class="zero-result" id="zeroBox">
     <div class="zi">💪</div>
-    <h2>괜찮아요, 처음부터 잘하는 사람은 없어요!</h2>
-    <p>이번엔 아쉬웠지만 포기하지 마세요 😊<br>
+    <h2 id="zeroTitle">괜찮아요, 처음부터 잘하는 사람은 없어요!</h2>
+    <p id="zeroMsg">이번엔 아쉬웠지만 포기하지 마세요 😊<br>
     오늘 배운 내용을 천천히 다시 읽어보면<br>
     다음엔 분명 훨씬 잘할 수 있을 거예요! 응원해요! 📚✨</p>
   </div>
@@ -224,17 +283,149 @@
     <div class="sbar-bg"><div class="sbar-fill" id="sBarFill" style="width:0%"></div></div>
     <div class="spct" id="sPct"></div>
     <button class="retry-btn" onclick="retryQuiz()">🔄 다시 풀기</button>
+    <button class="retry-btn" onclick="submitFeedback()" style="background:var(--purp);" id="feedbackBtn">📝 피드백 작성</button>
   </div>
 
   <!-- Answer Note -->
   <div class="ans-note" id="ansNote">
-    <h3>📋 정답 해설 모아보기</h3>
+    <h3 id="ansNoteTitle">📋 정답 해설 모아보기</h3>
     <ul id="ansList"></ul>
+  </div>
+
+  <!-- Feedback Section -->
+  <div class="feedback-section" id="feedbackSection">
+    <h3 id="fbTitle">📝 수업 개선점 피드백</h3>
+    <p id="fbDescription">이 수업을 더 좋게 만들기 위한 건의사항이 있으신가요? (선택사항)</p>
+    <textarea class="feedback-textarea" id="feedbackText" placeholder="예: 너무 빨랐어요 / 이 부분이 어려웠어요 / 이런 내용이 추가되면 좋을 것 같아요..."></textarea>
+    <button class="feedback-btn" onclick="saveFeedback()" id="saveFeedbackBtn">제출하기</button>
+    <p class="feedback-note" id="feedbackNote">여러분의 소중한 의견은 다음 수업 개선에 반영됩니다! ✨</p>
+    <div class="success-msg" id="successMsg">✅ 피드백이 저장되었습니다! 감사합니다!</div>
   </div>
 
 </div>
 
 <script>
+// ── 다국어 데이터 ────────────────────────────────────────────────
+const LANG_DATA = {
+  ko: {
+    langLabel: '언어 / Language / 语言:',
+    tagText: '기술과 가정 · 의복의 기능과 요소',
+    h1Text: '자기표현을 위한<br>옷차림과 의복 디자인',
+    pHeader: '배운 내용을 확인해 봅시다 — 총 8문제',
+    prizeText: '8문제를 모두 맞힌 선착순 2명에게 선물이 있어요!',
+    prizeSubText: '전부 맞히면 앞으로 나와서 선물을 받아 가세요 🎉',
+    completeText: '답변 완료',
+    submitText: '채점하기 ✏️',
+    retryText: '🔄 다시 풀기',
+    feedbackBtnText: '📝 피드백 작성',
+    correctText: '✅ 정답입니다! ',
+    wrongText: '❌ 오답입니다. 정답은 ',
+    zeroTitle: '괜찮아요, 처음부터 잘하는 사람은 없어요!',
+    zeroMsg: '이번엔 아쉬웠지만 포기하지 마세요 😊<br>오늘 배운 내용을 천천히 다시 읽어보면<br>다음엔 분명 훨씬 잘할 수 있을 거예요! 응원해요! 📚✨',
+    prizeTitle1: '🎉 첫 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁',
+    prizeTitle2: '🎉 두 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁',
+    prizeMsgText: '8문제 모두 정답! 정말 훌륭해요 ✨<br>선생님께 바로 알려 주세요!',
+    ansNoteTitle: '📋 정답 해설 모아보기',
+    fbTitle: '📝 수업 개선점 피드백',
+    fbDescription: '이 수업을 더 좋게 만들기 위한 건의사항이 있으신가요? (선택사항)',
+    saveFeedbackBtn: '제출하기',
+    feedbackNote: '여러분의 소중한 의견은 다음 수업 개선에 반영됩니다! ✨',
+    successMsg: '✅ 피드백이 저장되었습니다! 감사합니다!',
+    confirmMsg: (n) => `아직 ${n}문제를 풀지 않았어요. 그래도 채점할까요?`,
+    rateMsg: (pct) => `정답률 ${pct}%`
+  },
+  en: {
+    langLabel: 'Language / 언어 / 语言:',
+    tagText: 'Technology & Home · Function and Elements of Clothing',
+    h1Text: 'Clothing and Design<br>for Self-Expression',
+    pHeader: 'Let\'s review what we learned — 8 questions total',
+    prizeText: 'First 2 students to answer all 8 questions correctly will win a prize!',
+    prizeSubText: 'Get them all right and come to receive your prize! 🎉',
+    completeText: 'Complete',
+    submitText: 'Grade ✏️',
+    retryText: '🔄 Try Again',
+    feedbackBtnText: '📝 Send Feedback',
+    correctText: '✅ Correct! ',
+    wrongText: '❌ Incorrect. The answer is ',
+    zeroTitle: 'That\'s okay! Nobody starts perfect!',
+    zeroMsg: 'Don\'t give up even if it wasn\'t great this time! 😊<br>If you review today\'s lesson carefully,<br>you\'ll do much better next time! We believe in you! 📚✨',
+    prizeTitle1: '🎉 1st Perfect Score! Come up and get your prize! 🎁',
+    prizeTitle2: '🎉 2nd Perfect Score! Come up and get your prize! 🎁',
+    prizeMsgText: 'All 8 answers correct! Excellent work! ✨<br>Tell your teacher right away!',
+    ansNoteTitle: '📋 Answer Explanations',
+    fbTitle: '📝 Lesson Feedback',
+    fbDescription: 'Do you have suggestions to improve this lesson? (Optional)',
+    saveFeedbackBtn: 'Submit',
+    feedbackNote: 'Your feedback will help improve the next lesson! ✨',
+    successMsg: '✅ Feedback saved! Thank you!',
+    confirmMsg: (n) => `You haven't answered ${n} questions yet. Grade anyway?`,
+    rateMsg: (pct) => `Correct rate ${pct}%`
+  },
+  zh: {
+    langLabel: '语言 / Language / 언어:',
+    tagText: '技术与家政 · 服装的功能与要素',
+    h1Text: '为自我表达而穿衣<br>和服装设计',
+    pHeader: '让我们检验今天学的内容——共8道题',
+    prizeText: '答对全部8道题的前2名学生将获得奖品！',
+    prizeSubText: '全部答对就上来领取奖品吧 🎉',
+    completeText: '完成',
+    submitText: '评分 ✏️',
+    retryText: '🔄 重新开始',
+    feedbackBtnText: '📝 发送反馈',
+    correctText: '✅ 正确! ',
+    wrongText: '❌ 错误。正确答案是 ',
+    zeroTitle: '没关系，没有人一开始就很完美！',
+    zeroMsg: '虽然这次有点遗憾，但不要放弃！😊<br>如果你慢慢地重新阅读今天学的内容，<br>下一次一定能做得更好！加油！📚✨',
+    prizeTitle1: '🎉 第1个满分者！上来领取奖品！🎁',
+    prizeTitle2: '🎉 第2个满分者！上来领取奖品！🎁',
+    prizeMsgText: '全部8道题都答对！太棒了！✨<br>立即告诉老师！',
+    ansNoteTitle: '📋 答案解说汇总',
+    fbTitle: '📝 课程改进反馈',
+    fbDescription: '你有什么建议来改进这堂课吗？(可选)',
+    saveFeedbackBtn: '提交',
+    feedbackNote: '你的宝贵意见将反映在下节课的改进中！✨',
+    successMsg: '✅ 反馈已保存！感谢！',
+    confirmMsg: (n) => `还有${n}道题没有作答。继续评分吗?`,
+    rateMsg: (pct) => `正确率${pct}%`
+  }
+};
+
+let currentLang = 'ko';
+
+function changeLang(lang){
+  currentLang = lang;
+  ['ko','en','zh'].forEach(l=>{
+    const btn = document.getElementById(`btn${l.toUpperCase()}`);
+    if(btn) btn.classList.toggle('active',l===lang);
+  });
+  updateLanguageText();
+}
+
+function updateLanguageText(){
+  const data = LANG_DATA[currentLang];
+  document.getElementById('langLabel').textContent = data.langLabel;
+  document.getElementById('tagText').textContent = data.tagText;
+  document.getElementById('h1Text').innerHTML = data.h1Text;
+  document.getElementById('pHeader').textContent = data.pHeader;
+  document.getElementById('prizeText').textContent = data.prizeText;
+  document.getElementById('prizeSubText').textContent = data.prizeSubText;
+  document.getElementById('pLabel').textContent = `0 / 8 ${data.completeText}`;
+  document.getElementById('subBtn').textContent = data.submitText;
+  document.getElementById('feedbackBtn').textContent = data.feedbackBtnText;
+  document.getElementById('ansNoteTitle').textContent = data.ansNoteTitle;
+  document.getElementById('fbTitle').textContent = data.fbTitle;
+  document.getElementById('fbDescription').textContent = data.fbDescription;
+  document.getElementById('saveFeedbackBtn').textContent = data.saveFeedbackBtn;
+  document.getElementById('feedbackNote').textContent = data.feedbackNote;
+  document.getElementById('zeroTitle').textContent = data.zeroTitle;
+  document.getElementById('zeroMsg').innerHTML = data.zeroMsg;
+  document.getElementById('feedbackText').placeholder = 
+    currentLang === 'ko' ? '예: 너무 빨랐어요 / 이 부분이 어려웠어요 / 이런 내용이 추가되면 좋을 것 같아요...' :
+    currentLang === 'en' ? 'Example: Too fast / This part was hard / Adding this would be helpful...' :
+    '例如：太快了 / 这部分很难 / 加入这些内容会很好...';
+  buildQuiz();
+}
+
 // ── 선착순 2명 관리 (localStorage) ─────────────────────────────────
 const PRIZE_KEY = 'prizeCount_v1';
 function getPrizeCount(){ return parseInt(localStorage.getItem(PRIZE_KEY)||'0'); }
@@ -243,100 +434,48 @@ function incPrizeCount(){ localStorage.setItem(PRIZE_KEY, getPrizeCount()+1); }
 // ── 색상 순서 ────────────────────────────────────────────────────
 const CA = ['--coral','--teal','--gold','--purp','--navy','--teal','--coral','--gold'];
 
-// ── 문제 데이터 ──────────────────────────────────────────────────
-const QS = [
-  {
-    q:"TPO에서 'T'가 의미하는 것은 무엇인가요?",
-    opts:["Texture(재질)","Time(시간)","Tone(색조)","Type(유형)"],
-    ans:1,
-    ex:"TPO는 Time(시간) · Place(장소) · Occasion(상황)을 의미합니다. T는 '시간'으로, 언제 입는지를 고려하는 요소입니다."
-  },
-  {
-    q:"TPO에서 운동복에 대한 설명으로 옳은 것은?",
-    opts:[
-      "격식과 품위 있는 디자인을 선택해야 한다.",
-      "부드러운 소재로 입고 벗기 편해야 한다.",
-      "가볍고 신축성이 크며 땀 흡수가 잘 되어야 한다.",
-      "구김이 적고 위생적인 옷감이 좋다."
-    ],
-    ans:2,
-    ex:"운동복은 가볍고 신축성이 커서 활동하기 편하고, 여러 번 세탁해도 마모되지 않으며 땀 흡수가 잘 되는 재질이 좋습니다."
-  },
-  {
-    q:"의복 디자인의 기본 4요소로 옳은 것은?",
-    opts:[
-      "선 · 색 · 가격 · 브랜드",
-      "선 · 색 · 재질 · 무늬",
-      "색 · 재질 · 사이즈 · 무늬",
-      "선 · 재질 · 계절 · 무늬"
-    ],
-    ans:1,
-    ex:"의복 디자인의 기본 요소는 선(Line) · 색(Color) · 재질(Texture) · 무늬(Pattern) 4가지입니다."
-  },
-  {
-    q:"세로선을 활용하면 어떤 시각적 효과가 있나요?",
-    opts:[
-      "넓어 보이는 효과",
-      "길어 보이는 효과",
-      "작아 보이는 효과",
-      "따뜻해 보이는 효과"
-    ],
-    ans:1,
-    ex:"세로선은 시선을 위아래로 유도하여 길어 보이는 효과를 줍니다. 권위 있고 장엄한 느낌도 줄 수 있습니다."
-  },
-  {
-    q:"난색 계열의 색이 주는 느낌으로 옳은 것은?",
-    opts:[
-      "차갑고 차분한 느낌, 축소되어 보임",
-      "단조롭고 깔끔한 느낌, 무채색 계열",
-      "따뜻하고 활동적인 느낌, 확대되어 보임",
-      "안정적이고 길어 보이는 효과"
-    ],
-    ans:2,
-    ex:"빨강·주황·노랑 계열의 난색은 따뜻하고 활동적인 느낌을 주며, 확대되어 보이는 효과가 있습니다."
-  },
-  {
-    q:"유사 색상 조화에 대한 설명으로 옳은 것은?",
-    opts:[
-      "완전히 다른 색을 배치하여 강한 자극과 생동감을 준다.",
-      "비슷한 색상끼리 매치하여 안정적이고 길어 보이는 효과를 준다.",
-      "무채색만을 활용하여 단정한 느낌을 준다.",
-      "반드시 세 가지 이상의 색을 함께 써야 한다."
-    ],
-    ans:1,
-    ex:"유사 색상 조화는 비슷한 색상끼리 매치하여 시선이 길게 이어지고, 안정적이며 길어 보이는 효과를 줍니다."
-  },
-  {
-    q:"부피가 크고 표면이 거친 소재가 주는 느낌으로 옳은 것은?",
-    opts:[
-      "몸매 라인이 드러나며 우아한 느낌",
-      "매끄럽고 광택이 있으며 고급스러운 느낌",
-      "볼륨감이 느껴지며 덩치가 커 보일 수 있음",
-      "가볍고 활동적인 느낌"
-    ],
-    ans:2,
-    ex:"부피가 크고 거친 소재는 볼륨감이 느껴지며 덩치가 커 보일 수 있습니다."
-  },
-  {
-    q:"작은 무늬의 옷이 주는 효과로 옳은 것은?",
-    opts:[
-      "생동감 있고 대담하며, 몸집이 작아 보이는 효과",
-      "잔잔하고 차분하며, 몸집이 커 보이는 효과",
-      "활동적이고 불안정한 느낌",
-      "딱딱하고 정직한 이미지"
-    ],
-    ans:1,
-    ex:"작은 무늬는 잔잔하고 차분한 느낌을 주며, 문양이 작아 배경 면적이 상대적으로 넓어져 몸집이 커 보이는 효과가 있습니다."
-  }
-];
+// ── 문제 데이터 (다국어) ──────────────────────────────────────────────────
+const QS_DATA = {
+  ko: [
+    {q:"TPO에서 'T'가 의미하는 것은 무엇인가요?",opts:["Texture(재질)","Time(시간)","Tone(색조)","Type(유형)"],ans:1,ex:"TPO는 Time(시간) · Place(장소) · Occasion(상황)을 의미합니다. T는 '시간'으로, 언제 입는지를 고려하는 요소입니다."},
+    {q:"TPO에서 운동복에 대한 설명으로 옳은 것은?",opts:["격식과 품위 있는 디자인을 선택해야 한다.","부드러운 소재로 입고 벗기 편해야 한다.","가볍고 신축성이 크며 땀 흡수가 잘 되어야 한다.","구김이 적고 위생적인 옷감이 좋다."],ans:2,ex:"운동복은 가볍고 신축성이 커서 활동하기 편하고, 여러 번 세탁해도 마모되지 않으며 땀 흡수가 잘 되는 재질이 좋습니다."},
+    {q:"의복 디자인의 기본 4요소로 옳은 것은?",opts:["선 · 색 · 가격 · 브랜드","선 · 색 · 재질 · 무늬","색 · 재질 · 사이즈 · 무늬","선 · 재질 · 계절 · 무늬"],ans:1,ex:"의복 디자인의 기본 요소는 선(Line) · 색(Color) · 재질(Texture) · 무늬(Pattern) 4가지입니다."},
+    {q:"세로선을 활용하면 어떤 시각적 효과가 있나요?",opts:["넓어 보이는 효과","길어 보이는 효과","작아 보이는 효과","따뜻해 보이는 효과"],ans:1,ex:"세로선은 시선을 위아래로 유도하여 길어 보이는 효과를 줍니다. 권위 있고 장엄한 느낌도 줄 수 있습니다."},
+    {q:"난색 계열의 색이 주는 느낌으로 옳은 것은?",opts:["차갑고 차분한 느낌, 축소되어 보임","단조롭고 깔끔한 느낌, 무채색 계열","따뜻하고 활동적인 느낌, 확대되어 보임","안정적이고 길어 보이는 효과"],ans:2,ex:"빨강·주황·노랑 계열의 난색은 따뜻하고 활동적인 느낌을 주며, 확대되어 보이는 효과가 있습니다."},
+    {q:"유사 색상 조화에 대한 설명으로 옳은 것은?",opts:["완전히 다른 색을 배치하여 강한 자극과 생동감을 준다.","비슷한 색상끼리 매치하여 안정적이고 길어 보이는 효과를 준다.","무채색만을 활용하여 단정한 느낌을 준다.","반드시 세 가지 이상의 색을 함께 써야 한다."],ans:1,ex:"유사 색상 조화는 비슷한 색상끼리 매치하여 시선이 길게 이어지고, 안정적이며 길어 보이는 효과를 줍니다."},
+    {q:"부피가 크고 표면이 거친 소재가 주는 느낌으로 옳은 것은?",opts:["몸매 라인이 드러나며 우아한 느낌","매끄럽고 광택이 있으며 고급스러운 느낌","볼륨감이 느껴지며 덩치가 커 보일 수 있음","가볍고 활동적인 느낌"],ans:2,ex:"부피가 크고 거친 소재는 볼륨감이 느껴지며 덩치가 커 보일 수 있습니다."},
+    {q:"작은 무늬의 옷이 주는 효과로 옳은 것은?",opts:["생동감 있고 대담하며, 몸집이 작아 보이는 효과","잔잔하고 차분하며, 몸집이 커 보이는 효과","활동적이고 불안정한 느낌","딱딱하고 정직한 이미지"],ans:1,ex:"작은 무늬는 잔잔하고 차분한 느낌을 주며, 문양이 작아 배경 면적이 상대적으로 넓어져 몸집이 커 보이는 효과가 있습니다."}
+  ],
+  en: [
+    {q:"What does 'T' stand for in TPO?",opts:["Texture","Time","Tone","Type"],ans:1,ex:"TPO stands for Time · Place · Occasion. 'T' means Time, which considers when you wear the clothing."},
+    {q:"Which statement about sportswear is correct in TPO?",opts:["Formal and dignified design should be chosen.","Soft material that is easy to put on and take off.","Light, stretchy, and sweat-absorbent fabric is needed.","Non-wrinkle and hygienic fabric is good."],ans:2,ex:"Sportswear should be light and stretchy for easy activity, durable with multiple washes, and highly absorbent."},
+    {q:"What are the basic 4 elements of clothing design?",opts:["Line · Color · Price · Brand","Line · Color · Texture · Pattern","Color · Texture · Size · Pattern","Line · Texture · Season · Pattern"],ans:1,ex:"The basic elements of clothing design are Line · Color · Texture · Pattern."},
+    {q:"What visual effect does a vertical line create?",opts:["Makes you look wider","Makes you look taller","Makes you look smaller","Makes you look warmer"],ans:1,ex:"Vertical lines guide the eye up and down, creating a lengthening effect. It also gives an authoritative and majestic feeling."},
+    {q:"Which feeling does warm color convey?",opts:["Cool and calm, appears smaller","Monotonous and neat, achromatic","Warm and active, appears larger","Stable and lengthening effect"],ans:2,ex:"Red, orange, and yellow tones convey warmth and activity, and have an enlarging effect."},
+    {q:"Which statement about analogous color harmony is correct?",opts:["Contrasting colors create strong stimulation and vibrancy.","Similar colors create stability and a lengthening effect.","Use only achromatic colors for a neat feeling.","Must use three or more colors together."],ans:1,ex:"Analogous color harmony uses similar colors to create visual continuity, stability, and a lengthening effect."},
+    {q:"What feeling does thick and textured fabric create?",opts:["Body lines are revealed and elegant","Smooth, glossy, and luxurious","Volumetric and might look larger","Light and active"],ans:2,ex:"Thick and textured fabric creates volume and can make you look larger."},
+    {q:"What effect does small pattern clothing create?",opts:["Vivid and bold, makes you look smaller","Calm and serene, makes you look larger","Active and unstable feeling","Rigid and honest image"],ans:1,ex:"Small patterns create a calm, serene feeling. The small motifs make the background area relatively larger, creating an enlarging effect."}
+  ],
+  zh: [
+    {q:"TPO中的'T'代表什么？",opts:["质地","时间","色调","类型"],ans:1,ex:"TPO代表时间·地点·场合。T代表时间，考虑穿衣的时间。"},
+    {q:"关于TPO中运动服的说法，哪个正确？",opts:["应该选择正式庄重的设计。","应该是柔软的面料，容易穿脱。","应该是轻薄、弹性强、吸汗性好的面料。","应该是不起皱、卫生的面料。"],ans:2,ex:"运动服应该轻薄且有弹性，容易活动，多次洗涤不易磨损，吸汗性好。"},
+    {q:"服装设计的基本4要素是什么？",opts:["线条·颜色·价格·品牌","线条·颜色·质地·图案","颜色·质地·尺码·图案","线条·质地·季节·图案"],ans:1,ex:"服装设计的基本要素是线条·颜色·质地·图案。"},
+    {q:"竖线有什么视觉效果？",opts:["显得宽","显得长","显得小","显得温暖"],ans:1,ex:"竖线引导眼睛上下移动，产生拉长效果。也能给人权威庄严的感觉。"},
+    {q:"暖色系给人什么感受？",opts:["冷色沉静，显瘦","单调整洁，无彩色","温暖活力，显大","稳定拉长效果"],ans:2,ex:"红、橙、黄色系给人温暖活力的感受，有显大的效果。"},
+    {q:"关于类似色调和的说法，哪个正确？",opts:["不同颜色产生强烈刺激和生动感。","相似颜色显得稳定且拉长。","只用无彩色显得整洁。","必须使用三种以上的颜色。"],ans:1,ex:"类似色调和用相似的颜色配搭，产生视觉连续感，显得稳定且拉长。"},
+    {q:"厚实粗糙的面料给人什么感受？",opts:["身体线条明显，优雅","光滑有光泽，高级感","有体积感，显胖","轻薄活跃"],ans:2,ex:"厚实粗糙的面料有体积感，容易显胖。"},
+    {q:"小图案的衣服有什么效果？",opts:["生动大胆，显瘦","安宁沉静，显胖","活跃不稳定","生硬诚实"],ans:1,ex:"小图案显得安宁沉静，因为图案小，背景面积相对宽，产生显胖的效果。"}
+  ]
+};
 
-const answered = new Array(QS.length).fill(null);
+const answered = new Array(8).fill(null);
 let submitted = false;
 
 // ── 퀴즈 빌드 ────────────────────────────────────────────────────
 function buildQuiz(){
   const area = document.getElementById('quizArea');
   area.innerHTML = '';
+  const QS = QS_DATA[currentLang];
   QS.forEach((q, qi) => {
     const ca = `var(${CA[qi]})`;
     const card = document.createElement('div');
@@ -362,89 +501,91 @@ function buildQuiz(){
 function pick(qi, oi){
   if(submitted) return;
   answered[qi] = oi;
-  QS[qi].opts.forEach((_,idx)=>{
+  for(let idx=0;idx<4;idx++){
     const b = document.getElementById(`opt-${qi}-${idx}`);
-    b.style.borderColor=''; b.style.background='';
-  });
+    if(b){
+      b.style.borderColor=''; b.style.background='';
+    }
+  }
   const sel = document.getElementById(`opt-${qi}-${oi}`);
-  sel.style.borderColor = `var(${CA[qi]})`;
-  sel.style.background  = '#fff';
+  if(sel){
+    sel.style.borderColor = `var(${CA[qi]})`;
+    sel.style.background  = '#fff';
+  }
   updateProg();
 }
 
 function updateProg(){
   const done = answered.filter(a=>a!==null).length;
-  document.getElementById('pFill').style.width = (done/QS.length*100)+'%';
-  document.getElementById('pLabel').textContent = `${done} / ${QS.length} 답변 완료`;
+  const data = LANG_DATA[currentLang];
+  document.getElementById('pFill').style.width = (done/8*100)+'%';
+  document.getElementById('pLabel').textContent = `${done} / 8 ${data.completeText}`;
 }
 
-// ── 채점 ─────────────────────────────────────────────────────────
 function submitAll(){
   const ua = answered.filter(a=>a===null).length;
-  if(ua>0 && !confirm(`아직 ${ua}문제를 풀지 않았어요. 그래도 채점할까요?`)) return;
+  const data = LANG_DATA[currentLang];
+  if(ua>0 && !confirm(data.confirmMsg(ua))) return;
   submitted = true;
   document.getElementById('subBtn').disabled = true;
 
   let score = 0;
   const ansLines = [];
+  const QS = QS_DATA[currentLang];
 
   QS.forEach((q, qi)=>{
     const my = answered[qi];
     const ok = my === q.ans;
     if(ok) score++;
 
-    q.opts.forEach((_,oi)=>{
+    for(let oi=0;oi<4;oi++){
       const b = document.getElementById(`opt-${qi}-${oi}`);
-      b.disabled = true;
-      b.style.borderColor=''; b.style.background='';
-      b.classList.remove('correct','wrong','dim');
-      if(oi===q.ans) b.classList.add('correct');
-      else if(oi===my && !ok) b.classList.add('wrong');
-      else b.classList.add('dim');
-    });
+      if(b){
+        b.disabled = true;
+        b.style.borderColor=''; b.style.background='';
+        b.classList.remove('correct','wrong','dim');
+        if(oi===q.ans) b.classList.add('correct');
+        else if(oi===my && !ok) b.classList.add('wrong');
+        else b.classList.add('dim');
+      }
+    }
 
     const fb = document.getElementById(`fb-${qi}`);
-    fb.classList.add('show');
-    if(ok){
-      fb.classList.add('ok');
-      fb.innerHTML = '✅ 정답입니다! ' + q.ex;
-    } else {
-      fb.classList.add('ng');
-      fb.innerHTML = `❌ 오답입니다. 정답은 <strong>${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</strong><br>${q.ex}`;
+    if(fb){
+      fb.classList.add('show');
+      if(ok){
+        fb.classList.add('ok');
+        fb.innerHTML = data.correctText + q.ex;
+      } else {
+        fb.classList.add('ng');
+        fb.innerHTML = `${data.wrongText}<strong>${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</strong><br>${q.ex}`;
+      }
     }
-    ansLines.push(`<li><b>Q${qi+1}</b>${my!==null?String.fromCharCode(65+my):'미응답'} → ${ok?'✅':'❌'} (정답: ${String.fromCharCode(65+q.ans)})</li>`);
   });
 
-  showResult(score, ansLines);
+  showResult(score);
 }
 
-// ── 결과 출력 ─────────────────────────────────────────────────────
-function showResult(score, ansLines){
-  const total = QS.length;
-  const pct   = Math.round(score/total*100);
+function showResult(score){
+  const total = 8;
+  const pct = Math.round(score/total*100);
   const panel = document.getElementById('resultPanel');
+  const data = LANG_DATA[currentLang];
 
-  // 0점 메시지
   if(score === 0){
     document.getElementById('zeroBox').classList.add('show');
   }
 
-  // 만점 → 선착순 처리
   if(score === total){
     const cnt = getPrizeCount();
     if(cnt < 2){
       incPrizeCount();
       const newCnt = getPrizeCount();
-      const prizeTxt = newCnt===1
-        ? '🎉 첫 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁'
-        : '🎉 두 번째 만점자! 앞으로 나와서 선물을 받아 가세요! 🎁';
-      document.getElementById('prizeTitle').textContent = prizeTxt;
-      document.getElementById('prizeMsg').innerHTML =
-        `8문제 모두 정답! 정말 훌륭해요 ✨<br>선생님께 바로 알려 주세요!`;
+      document.getElementById('prizeTitle').textContent = newCnt===1 ? data.prizeTitle1 : data.prizeTitle2;
+      document.getElementById('prizeMsg').innerHTML = data.prizeMsgText;
       document.getElementById('prizeBox').classList.add('show');
       launchConfetti(120);
     } else {
-      // 선착순 마감 후 만점자
       launchConfetti(80);
     }
   }
@@ -452,49 +593,73 @@ function showResult(score, ansLines){
   let emoji, stars, title, msg;
   if(score===total){
     emoji='🎉'; stars='⭐⭐⭐⭐⭐';
-    title='완벽해요! 8문제 모두 정답!';
-    msg='의복 디자인 요소를 완벽하게 이해했군요!<br>오늘 배운 내용을 실생활에서도 꼭 활용해 보세요 👏';
+    title = currentLang==='ko'?'완벽해요! 8문제 모두 정답!':currentLang==='en'?'Perfect! All 8 correct!':'完美！全部8道题都答对了！';
+    msg = currentLang==='ko'?'의복 디자인 요소를 완벽하게 이해했군요!<br>오늘 배운 내용을 실생활에서도 꼭 활용해 보세요 👏':currentLang==='en'?'You perfectly understand clothing design elements!<br>Please apply what you learned to your daily life! 👏':'你完美地理解了服装设计要素！<br>请在日常生活中应用今天学的内容！👏';
   } else if(score>=6){
     emoji='😊'; stars='⭐⭐⭐⭐';
-    title=`${score}문제 정답! 거의 다 맞혔어요!`;
-    msg=`아쉽게 ${total-score}문제를 틀렸어요.<br>틀린 문제의 해설을 다시 확인해 보세요!`;
+    const wrong = total-score;
+    title = currentLang==='ko'?`${score}문제 정답! 거의 다 맞혔어요!`:currentLang==='en'?`${score} correct! Almost there!`:`${score}道答对！几乎全对了！`;
+    msg = currentLang==='ko'?`아쉽게 ${wrong}문제를 틀렸어요.<br>틀린 문제의 해설을 다시 확인해 보세요!`:currentLang==='en'?`You got ${wrong} wrong.<br>Review the explanations for incorrect answers!`:`你有${wrong}道答错了。<br>请重新检查错误答案的解说！`;
   } else if(score>=4){
     emoji='🙂'; stars='⭐⭐⭐';
-    title=`${score}문제 정답! 절반 이상 맞혔어요!`;
-    msg='아래 해설을 잘 읽고 헷갈리는 개념을 다시 공부해 봐요.<br>조금만 더 노력하면 완벽하게 이해할 수 있어요!';
+    title = currentLang==='ko'?`${score}문제 정답! 절반 이상 맞혔어요!`:currentLang==='en'?`${score} correct! Over half!`:`${score}道答对！答对了一半以上！`;
+    msg = currentLang==='ko'?'아래 해설을 잘 읽고 헷갈리는 개념을 다시 공부해 봐요.<br>조금만 더 노력하면 완벽하게 이해할 수 있어요!':currentLang==='en'?'Read the explanations and study confusing concepts carefully.<br>With a little more effort, you\'ll understand perfectly!':'认真阅读解说，重新学习困惑的概念。<br>再努力一点你就能完美理解了！';
   } else if(score>=1){
     emoji='😅'; stars='⭐⭐';
-    title=`${score}문제 정답! 조금 더 공부가 필요해요!`;
-    msg='수업 내용을 다시 한번 살펴보고 아래 해설을 꼭 읽어 보세요.<br>다시 도전하면 훨씬 좋은 결과가 있을 거예요!';
+    title = currentLang==='ko'?`${score}문제 정답! 조금 더 공부가 필요해요!`:currentLang==='en'?`${score} correct! More study needed!`:`${score}道答对！你需要多学习！`;
+    msg = currentLang==='ko'?'수업 내용을 다시 한번 살펴보고 아래 해설을 꼭 읽어 보세요.<br>다시 도전하면 훨씬 좋은 결과가 있을 거예요!':currentLang==='en'?'Review the content and read the explanations.<br>Try again for better results!':'再次查看课程内容，仔细阅读解说。<br>如果再试一次，你会得到更好的结果！';
   } else {
     emoji='😢'; stars='⭐';
-    title='아직 개념이 낯설 수 있어요!';
-    msg='처음이니까 괜찮아요. 포기하지 말고 다시 도전해 봐요!';
+    title = currentLang==='ko'?'아직 개념이 낯설 수 있어요!':currentLang==='en'?'Concepts are new to you!':'概念对你来说还很陌生！';
+    msg = currentLang==='ko'?'처음이니까 괜찮아요. 포기하지 말고 다시 도전해 봐요!':currentLang==='en'?'It\'s okay! Don\'t give up and try again!':'没关系！不要放弃，再试一次！';
   }
 
   document.getElementById('rEmoji').textContent = emoji;
   document.getElementById('rStars').textContent = stars;
-  document.getElementById('rNum').textContent   = score;
-  document.getElementById('rTot').textContent   = ' / ' + total;
+  document.getElementById('rNum').textContent = score;
+  document.getElementById('rTot').textContent = ' / ' + total;
   document.getElementById('rTitle').textContent = title;
-  document.getElementById('rMsg').innerHTML     = msg;
-  document.getElementById('sPct').textContent   = '정답률 ' + pct + '%';
+  document.getElementById('rMsg').innerHTML = msg;
+  document.getElementById('sPct').textContent = data.rateMsg(pct);
   panel.classList.add('show');
-  setTimeout(()=>{ document.getElementById('sBarFill').style.width = pct+'%'; }, 100);
+  setTimeout(()=>{ 
+    const fill = document.getElementById('sBarFill');
+    if(fill) fill.style.width = pct+'%'; 
+  }, 100);
 
-  document.getElementById('ansList').innerHTML = ansLines.join('');
   document.getElementById('ansNote').classList.add('show');
   panel.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function submitFeedback(){
+  document.getElementById('feedbackSection').classList.add('show');
+  document.getElementById('feedbackSection').scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('feedbackText').focus();
+}
+
+function saveFeedback(){
+  const feedback = document.getElementById('feedbackText').value;
+  if(feedback.trim()){
+    localStorage.setItem('feedback_' + Date.now(), feedback);
+    document.getElementById('feedbackText').value = '';
+    document.getElementById('successMsg').classList.add('show');
+    setTimeout(()=>{
+      document.getElementById('successMsg').classList.remove('show');
+    },3000);
+  }
 }
 
 function retryQuiz(){
   submitted = false;
   answered.fill(null);
-  ['resultPanel','ansNote','prizeBox','zeroBox'].forEach(id=>{
-    document.getElementById(id).classList.remove('show');
+  ['resultPanel','ansNote','prizeBox','zeroBox','feedbackSection'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('show');
   });
   document.getElementById('subBtn').disabled = false;
-  document.getElementById('sBarFill').style.width = '0%';
+  const fill = document.getElementById('sBarFill');
+  if(fill) fill.style.width = '0%';
+  document.getElementById('successMsg').classList.remove('show');
   buildQuiz();
   window.scrollTo({top:0,behavior:'smooth'});
 }
