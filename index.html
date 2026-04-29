@@ -231,18 +231,40 @@
 </div>
   
 <style>
+  /* 1. 로딩 애니메이션 (뱅글뱅글) */
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.wrap { 
-  opacity: 0; 
-  pointer-events: none; 
-  transition: opacity 0.3s; 
-}
-.wrap.show { 
-  opacity: 1; 
-  pointer-events: auto; 
-}
-</style>
 
+  /* 2. 퀴즈 본문 영역 (0.3초 효과) */
+  .wrap { 
+    opacity: 0; 
+    visibility: hidden; /* 아예 안 보이게 숨김 */
+    transition: opacity 0.3s ease-in-out; 
+  }
+  
+  /* 비서가 ON 신호를 받으면 이 클래스를 붙여서 화면을 보여줍니다 */
+  .wrap.show { 
+    opacity: 1; 
+    visibility: visible; 
+  }
+
+  /* 3. 배경색 (하얀 화면 방지) */
+  body {
+    background-color: #f4f7f6; 
+  }
+  .wrap { 
+    opacity: 0; 
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out; 
+  }
+  .wrap.show { 
+    opacity: 1; 
+    visibility: visible;
+  }
+  
+  body {
+    background-color: #f4f7f6; 
+  }
+</style>
 <div class="wrap">
 
   <!-- Header -->
