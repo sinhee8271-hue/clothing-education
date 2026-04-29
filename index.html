@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>의복 디자인 요소 — 평가 퀴즈</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+  @import url('https://script.google.com/macros/s/AKfycbzh7vHQTD4k14L6K2O4gW46c0yMYAKAuMwm6NZGLkKmfSmBRFrG4XdpIRLYSokovugT/exec');
 
   :root {
     --navy:#2C3D6B; --mnavy:#4A5F9E; --lnavy:#EBEDF5;
@@ -217,13 +217,22 @@
 </style>
 </head>
 <body>
-<!-- Language Bar -->
 <div class="lang-bar">
   <span id="langLabel">언어 / Language / 语言:</span>
   <button class="lang-btn active" onclick="changeLang('ko')" id="btnKo">한국어 🇰🇷</button>
   <button class="lang-btn" onclick="changeLang('en')" id="btnEn">English 🇺🇸</button>
   <button class="lang-btn" onclick="changeLang('zh')" id="btnZh">中文 🇨🇳</button>
 </div>
+
+<div id="waitScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e2d58; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; text-align:center;">
+  <div style="width:50px; height:50px; border:5px solid rgba(255,255,255,0.2); border-top:5px solid #E07B6A; border-radius:50%; animation:spin 1s linear infinite; margin-bottom:20px;"></div>
+  <h2 style="font-size:24px; margin-bottom:10px;">잠시만 기다려 주세요!</h2>
+  <p style="opacity:0.8;">모든 학생이 접속하면 퀴즈가 시작합니다.</p>
+</div>
+
+<style>
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
 
 <div class="wrap">
 
@@ -655,7 +664,7 @@ function showResult(score){
     nameTag.style.fontWeight = "700";
   }
   
-  fetch("https://script.google.com/macros/s/AKfycbzvAu8DRuoJ_dy3DrjIBGMF1OMUDulMnwcV55HR878mRJPnlyg8lT-xOYlCsOVyO65Y/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzh7vHQTD4k14L6K2O4gW46c0yMYAKAuMwm6NZGLkKmfSmBRFrG4XdpIRLYSokovugT/exec", {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({ name: nm, score: score })
@@ -722,7 +731,7 @@ function saveFeedback() {
   saveBtn.textContent = "전송 중...";
 
   // 💡 중요: 'name'과 'score' 형식을 퀴즈 데이터와 똑같이 맞춰서 보냅니다.
-  fetch("https://script.google.com/macros/s/AKfycbzvAu8DRuoJ_dy3DrjIBGMF1OMUDulMnwcV55HR878mRJPnlyg8lT-xOYlCsOVyO65Y/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzh7vHQTD4k14L6K2O4gW46c0yMYAKAuMwm6NZGLkKmfSmBRFrG4XdpIRLYSokovugT/exec", {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({
@@ -741,11 +750,34 @@ function saveFeedback() {
   .catch(err => {
     console.error("에러:", err);
     alert("전송 실패. 다시 시도해 주세요.");
-    saveBtn.disabled = false;
+  saveBtn.disabled = false;
     saveBtn.textContent = "제출하기";
   });
 }
-  
+
+// ── 🚀 실시간 시작 신호 감시 비서 (이 부분을 추가하세요) ──────────────────────
+const SCRIPT_URL_CHECK = "https://script.google.com/macros/s/AKfycbzh7vHQTD4k14L6K2O4gW46c0yMYAKAuMwm6NZGLkKmfSmBRFrG4XdpIRLYSokovugT/exec";
+
+function checkStart() {
+  // 선생님이 시트의 F1 셀을 ON으로 바꿨는지 확인 (GET 방식)
+  fetch(SCRIPT_URL_CHECK)
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "ON" || data.status === "on") {
+        const waitScreen = document.getElementById('waitScreen');
+        if (waitScreen) {
+          waitScreen.style.display = 'none'; // 대기 화면 해제!
+          clearInterval(startInterval);    // 이제 체크 중단
+        }
+      }
+    })
+    .catch(err => console.log("서버 신호 대기 중..."));
+}
+
+// 3초마다 선생님이 스위치를 켰는지 확인합니다.
+const startInterval = setInterval(checkStart, 3000);
+// ─────────────────────────────────────────────────────────────────────────────
+
 // 퀴즈 생성 실행
 buildQuiz();
 </script>
