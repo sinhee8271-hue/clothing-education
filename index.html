@@ -224,12 +224,12 @@
   <button class="lang-btn" onclick="changeLang('zh')" id="btnZh">中文 🇨🇳</button>
 </div>
 
-<div id="waitScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e2d58; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center; color:white; text-align:center;">
+<div id="waitScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e2d58; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; text-align:center;">
   <div style="width:50px; height:50px; border:5px solid rgba(255,255,255,0.2); border-top:5px solid #E07B6A; border-radius:50%; animation:spin 1s linear infinite; margin-bottom:20px;"></div>
-  <h2 style="font-size:24px; margin-bottom:10px;">잠시만 기다려 주세요!</h2>
-  <p style="opacity:0.8;">모든 학생이 접속하면 퀴즈가 시작합니다.</p>
+  <h2 style="font-size:24px; margin-bottom:10px;">데이터를 확인 중입니다...</h2>
+  <p style="opacity:0.8;">잠시만 기다려 주세요!</p>
 </div>
-  
+
 <style>
   /* 1. 로딩 애니메이션 (뱅글뱅글) */
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
