@@ -759,22 +759,28 @@ function saveFeedback() {
 const SCRIPT_URL_CHECK = "https://script.google.com/macros/s/AKfycbzh7vHQTD4k14L6K2O4gW46c0yMYAKAuMwm6NZGLkKmfSmBRFrG4XdpIRLYSokovugT/exec";
 
 function checkStart() {
-  // 선생님이 시트의 F1 셀을 ON으로 바꿨는지 확인 (GET 방식)
   fetch(SCRIPT_URL_CHECK)
     .then(res => res.json())
     .then(data => {
       if (data.status === "ON" || data.status === "on") {
         const waitScreen = document.getElementById('waitScreen');
         if (waitScreen) {
-          waitScreen.style.display = 'none'; // 대기 화면 해제!
-          clearInterval(startInterval);    // 이제 체크 중단
+          waitScreen.style.display = 'none'; // 서버가 ON이면 즉시 화면 치우기
+          clearInterval(startInterval);    
         }
+      } else {
+        // 만약 서버가 OFF라면 대기 화면이 확실히 보이게 처리
+        const waitScreen = document.getElementById('waitScreen');
+        if (waitScreen) waitScreen.style.display = 'flex';
       }
     })
     .catch(err => console.log("서버 신호 대기 중..."));
 }
 
-// 3초마다 선생님이 스위치를 켰는지 확인합니다.
+// 1. 페이지 로드되자마자 "즉시" 한 번 확인 (새로고침/다시풀기 대비)
+checkStart();
+
+// 2. 그 이후에는 3초마다 한 번씩 확인
 const startInterval = setInterval(checkStart, 3000);
 // ─────────────────────────────────────────────────────────────────────────────
 
