@@ -224,14 +224,23 @@
   <button class="lang-btn" onclick="changeLang('zh')" id="btnZh">中文 🇨🇳</button>
 </div>
 
-<div id="waitScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e2d58; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; text-align:center;">
+<div id="waitScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e2d58; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center; color:white; text-align:center;">
   <div style="width:50px; height:50px; border:5px solid rgba(255,255,255,0.2); border-top:5px solid #E07B6A; border-radius:50%; animation:spin 1s linear infinite; margin-bottom:20px;"></div>
   <h2 style="font-size:24px; margin-bottom:10px;">잠시만 기다려 주세요!</h2>
   <p style="opacity:0.8;">모든 학생이 접속하면 퀴즈가 시작합니다.</p>
 </div>
-
+  
 <style>
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.wrap { 
+  opacity: 0; 
+  pointer-events: none; 
+  transition: opacity 0.3s; 
+}
+.wrap.show { 
+  opacity: 1; 
+  pointer-events: auto; 
+}
 </style>
 
 <div class="wrap">
@@ -762,21 +771,22 @@ function checkStart() {
   fetch(SCRIPT_URL_CHECK)
     .then(res => res.json())
     .then(data => {
+      const waitScreen = document.getElementById('waitScreen');
+      const wrap = document.querySelector('.wrap');
+
       if (data.status === "ON" || data.status === "on") {
-        const waitScreen = document.getElementById('waitScreen');
-        if (waitScreen) {
-          waitScreen.style.display = 'none'; // 서버가 ON이면 즉시 화면 치우기
-          clearInterval(startInterval);    
-        }
+        // 선생님이 시작했을 때
+        if (waitScreen) waitScreen.style.display = 'none'; 
+        if (wrap) wrap.classList.add('show'); // 퀴즈를 짠! 하고 보여줌
+        clearInterval(startInterval); 
       } else {
-        // 만약 서버가 OFF라면 대기 화면이 확실히 보이게 처리
-        const waitScreen = document.getElementById('waitScreen');
-        if (waitScreen) waitScreen.style.display = 'flex';
+        // 선생님이 아직 대기 중일 때
+        if (waitScreen) waitScreen.style.display = 'flex'; // 대기 화면을 보여줌
+        if (wrap) wrap.classList.remove('show');
       }
     })
-    .catch(err => console.log("서버 신호 대기 중..."));
+    .catch(err => console.log("서버 응답 대기..."));
 }
-
 // 1. 페이지 로드되자마자 "즉시" 한 번 확인 (새로고침/다시풀기 대비)
 checkStart();
 
